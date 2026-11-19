@@ -2304,6 +2304,12 @@ select.qbill-input{
 .sal-advblk{margin-top:12px;border:1.5px solid #F5D9C4;background:#FFF8F2;border-radius:14px;padding:12px;}
 .sal-advblk-t{font-size:11px;font-weight:800;letter-spacing:.6px;color:var(--fire);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .sal-advblk .sal-fields{margin-top:0;}
+.sal-advline{margin-top:10px;font-size:12.5px;color:var(--ink);}
+.sal-advline span{color:var(--mid);font-size:11.5px;}
+.sal-advline b{color:var(--fire);font-family:'Syne',sans-serif;}
+.sal-more{margin-top:12px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;}
+.sal-more>summary{cursor:pointer;font-size:12.5px;font-weight:800;color:var(--mid);list-style:none;}
+.sal-more[open]>summary{margin-bottom:10px;}
 .sal-advstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px;}
 .sal-advstats div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;}
 .sal-advstats b{display:block;font:800 14px 'Syne',sans-serif;color:var(--ink);}
@@ -6239,14 +6245,15 @@ function salOwed(id, ym) {
       const r = salRec(m, id);
       if (r.paid || r.nosal || !salBaseFor(id, m)) continue;
       const av = salAdvState(id, m);
-      if (av.payable > 0) items.push({ m, amt: av.payable });
+      const left = av.payable - salMoney(r.partPaid);
+      if (left > 0) items.push({ m, amt: left });
     }
   }
   return items;
 }
 function salPendInfo(id, r, ym) {
   const prev = salOwed(id, ym), prevSum = prev.reduce((t, x) => t + x.amt, 0);
-  const cur = (r.paid || r.nosal || !r.base) ? 0 : r.net;
+  const cur = (r.paid || r.nosal || !r.base) ? 0 : Math.max(0, r.net - (r.partPaid || 0));
   return { prev, prevSum, cur, total: prevSum + cur, months: prev.length + (cur ? 1 : 0) };
 }
 function salPendColHTML(r, id, ym) {
@@ -6256,11 +6263,11 @@ function salPendColHTML(r, id, ym) {
 }
 function salOweHTML(s, r, ym) {
   const P = salPendInfo(s.id, r, ym), prev = P.prev, cur = P.cur, total = P.total;
-  const L = prev.map(x => `<div><span>${salMonthName(x.m)} salary (unpaid)</span><b>${salInr(x.amt)}</b></div>`);
-  if (cur) L.push(`<div><span>${salMonthName(ym)} salary${r.advRec ? ' (after advance cut)' : ''}</span><b>${salInr(cur)}</b></div>`);
-  return `<div class="sal-owe${total ? '' : ' clear'}"><div class="sal-owe-t">NET PAYABLE — ALL UNPAID MONTHS</div>
+  const L = prev.map(x => `<div><span>${salMonthName(x.m) + ' salary (unpaid)'}</span><b>${salInr(x.amt)}</b></div>`);
+  if (cur) L.push(`<div><span>${salMonthName(ym)} salary${r.advRec ? ' (after advance cut)' : ''}${r.partPaid ? ' (balance)' : ''}</span><b>${salInr(cur)}</b></div>`);
+  return `<div class="sal-owe-t">NET PAYABLE — ALL UNPAID MONTHS</div>
     <div class="sal-owe-n">${total ? salInr(total) : '₹0 — nothing pending ✓'}</div>
-    ${L.length ? `<div class="sal-owe-l">${L.join('')}</div>` : ''}</div>`;
+    ${L.length ? `<div class="sal-owe-l">${L.join('')}</div>` : ''}`;
 }
 
 // Pay for one staff member in one salary month
@@ -6276,7 +6283,7 @@ function salCalc(s, ym) {
   const bonus = salMoney(r.bonus), other = salMoney(r.adv);
   const av = salAdvState(s.id, ym);
   const net = av.payable;
-  return { c, base, givenOn: r.givenOn || '', nosal: !!r.nosal, cut: !!r.cut, perDay, lost, absDed, bonus, other, due: av.due, advOpen: av.open, advRec: av.rec, advNew: av.add, advGive: av.extra, advOn: r.advOn || '', given: av.given, advBal: av.bal, advItems: [], net, paid: !!r.paid, paidOn: r.paidOn || '', note: r.note || '' };
+  return { c, base, givenOn: r.givenOn || '', nosal: !!r.nosal, cut: !!r.cut, partPaid: salMoney(r.partPaid), perDay, lost, absDed, bonus, other, due: av.due, advOpen: av.open, advRec: av.rec, advNew: av.add, advGive: av.extra, advOn: r.advOn || '', given: av.given, advBal: av.bal, advItems: [], net, paid: !!r.paid, paidOn: r.paidOn || '', note: r.note || '' };
 }
 function salStaff(ym) { return attMonthStaff(ym); }
 
@@ -6391,7 +6398,7 @@ function renderSalary() {
 function salRenderSummary() {
   const ym = _salMonth, staff = salStaff(ym);
   let total = 0, paid = 0, advBal = 0;
-  staff.forEach(s => { const r = salCalc(s, ym); total += r.net; advBal += r.advBal; if (r.paid) paid += r.net; });
+  staff.forEach(s => { const r = salCalc(s, ym); total += r.net; advBal += r.advBal; if (r.paid) paid += r.net; else paid += Math.min(r.partPaid || 0, r.net); });
   document.getElementById('sal-summary').innerHTML =
     `<div class="sal-tile T"><b>${salInr(total)}</b><span>Total payable</span></div>` +
     `<div class="sal-tile P"><b>${salInr(paid)}</b><span>Paid</span></div>` +
@@ -6421,37 +6428,42 @@ function salItemHTML(s, ym) {
       <span class="sal-chev">›</span>
     </button>
     <div class="sal-body">
-      <div id="sal-owe-${id}">${salOweHTML(s, r, ym)}</div>
+      <div class="sal-owe${(salPendInfo(id, r, ym).total) ? '' : ' clear'}" id="sal-owe-${id}">
+        <div id="sal-owedyn-${id}">${salOweHTML(s, r, ym)}</div>
+      </div>
       <div class="sal-att">
         <span class="P">${attNum(r.c.P)} present</span><span class="H">${attNum(r.c.H)} half</span>
         <span class="A">${attNum(r.c.A)} absent</span><span class="L">${attNum(r.c.L)} leave</span>
       </div>
-      <div class="sal-fields">
-        <div class="sal-f full"><label for="sal-base-${id}">MONTHLY SALARY (₹) — change applies from ${salMonthName(ym)} onwards</label>
-          <input id="sal-base-${id}" type="number" min="0" inputmode="decimal" placeholder="e.g. 15000" value="${val(salBaseFor(id, ym))}" oninput="salEdit('${id}','base',this.value)"><div id="sal-hist-${id}">${salHistHTML(id, ym)}</div></div>
-        <div class="sal-f"><label for="sal-bonus-${id}">BONUS / OVERTIME (₹)</label>
-          <input id="sal-bonus-${id}" type="number" min="0" inputmode="decimal" placeholder="0" value="${val(rec.bonus)}" oninput="salEdit('${id}','bonus',this.value)"></div>
-        <div class="sal-f"><label for="sal-adv-${id}">OTHER DEDUCTION (₹)</label>
-          <input id="sal-adv-${id}" type="number" min="0" inputmode="decimal" placeholder="0" value="${val(rec.adv)}" oninput="salEdit('${id}','adv',this.value)"></div>
-        <div class="sal-f"><label for="sal-given-${id}">AMOUNT GIVEN (₹) — empty if only salary</label>
-          <input id="sal-given-${id}" type="number" min="0" inputmode="decimal" placeholder="e.g. 50000" value="${val(rec.given)}" oninput="salEdit('${id}','given',this.value)"></div>
-        <div class="sal-f"><label for="sal-givenon-${id}">DATE GIVEN</label>
-          <input id="sal-givenon-${id}" type="date" value="${attEsc(rec.givenOn || '')}" onchange="salEdit('${id}','givenOn',this.value)"></div>
-        <div class="sal-f full"><label for="sal-note-${id}">NOTE (optional)</label>
-          <input id="sal-note-${id}" type="text" maxlength="80" placeholder="e.g. Diwali bonus" value="${attEsc(rec.note || '')}" oninput="salEdit('${id}','note',this.value)"></div>
-      </div>
+      <div class="sal-calc" id="sal-calc-${id}">${salCalcHTML(r)}</div>
+      <div class="sal-acts" id="sal-acts-${id}">${salActsHTML(id, r)}</div>
       <div class="sal-advblk">
         <div class="sal-advblk-t">💸 ADVANCE</div>
         <div class="sal-fields">
-          <div class="sal-f"><label for="sal-advgive-${id}">ADVANCE AMOUNT (₹) — given this month</label>
+          <div class="sal-f"><label for="sal-advgive-${id}">GIVE ADVANCE (₹)</label>
             <input id="sal-advgive-${id}" type="number" min="0" inputmode="decimal" placeholder="e.g. 5000" value="${val(rec.advGive)}" oninput="salEdit('${id}','advGive',this.value)"></div>
-          <div class="sal-f"><label for="sal-advon-${id}">ADVANCE DATE</label>
+          <div class="sal-f"><label for="sal-advon-${id}">DATE</label>
             <input id="sal-advon-${id}" type="date" value="${attEsc(rec.advOn || '')}" onchange="salEdit('${id}','advOn',this.value)"></div>
         </div>
-        <div class="sal-advstats" id="sal-advstats-${id}">${salAdvStatsHTML(r)}</div>
+        <div class="sal-advline" id="sal-advstats-${id}">${salAdvStatsHTML(r)}</div>
       </div>
-      <div class="sal-calc" id="sal-calc-${id}">${salCalcHTML(r)}</div>
-      <div class="sal-acts" id="sal-acts-${id}">${salActsHTML(id, r)}</div>
+      <details class="sal-more"${(!salBaseFor(id, ym) || rec.bonus || rec.adv || rec.note || rec.given) ? ' open' : ''}>
+        <summary>✎ Salary, bonus, deduction, note</summary>
+        <div class="sal-fields">
+          <div class="sal-f full"><label for="sal-base-${id}">MONTHLY SALARY (₹) — change applies from ${salMonthName(ym)} onwards</label>
+            <input id="sal-base-${id}" type="number" min="0" inputmode="decimal" placeholder="e.g. 15000" value="${val(salBaseFor(id, ym))}" oninput="salEdit('${id}','base',this.value)"><div id="sal-hist-${id}">${salHistHTML(id, ym)}</div></div>
+          <div class="sal-f"><label for="sal-bonus-${id}">BONUS / OVERTIME (₹)</label>
+            <input id="sal-bonus-${id}" type="number" min="0" inputmode="decimal" placeholder="0" value="${val(rec.bonus)}" oninput="salEdit('${id}','bonus',this.value)"></div>
+          <div class="sal-f"><label for="sal-adv-${id}">OTHER DEDUCTION (₹)</label>
+            <input id="sal-adv-${id}" type="number" min="0" inputmode="decimal" placeholder="0" value="${val(rec.adv)}" oninput="salEdit('${id}','adv',this.value)"></div>${rec.given ? `
+          <div class="sal-f"><label for="sal-given-${id}">AMOUNT GIVEN (₹) — extra over salary becomes advance</label>
+            <input id="sal-given-${id}" type="number" min="0" inputmode="decimal" value="${val(rec.given)}" oninput="salEdit('${id}','given',this.value)"></div>
+          <div class="sal-f"><label for="sal-givenon-${id}">DATE GIVEN</label>
+            <input id="sal-givenon-${id}" type="date" value="${attEsc(rec.givenOn || '')}" onchange="salEdit('${id}','givenOn',this.value)"></div>` : ''}
+          <div class="sal-f full"><label for="sal-note-${id}">NOTE (optional)</label>
+            <input id="sal-note-${id}" type="text" maxlength="80" placeholder="e.g. Diwali bonus" value="${attEsc(rec.note || '')}" oninput="salEdit('${id}','note',this.value)"></div>
+        </div>
+      </details>
       <div id="sal-ledger-${id}">${salLedgerHTML(id, r)}</div>
     </div>
   </div>`;
@@ -6459,10 +6471,11 @@ function salItemHTML(s, ym) {
 
 function salAdvStatsHTML(r) {
   const newAdv = (r.advNew || 0) + (r.advGive || 0);
-  return `<div><b>${salInr(r.advOpen)}</b><span>Before this month</span></div>
-    <div class="rec"><b>− ${salInr(r.advRec)}</b><span>Cancelled by salary</span></div>
-    <div class="new"><b>+ ${salInr(newAdv)}</b><span>New advance</span></div>
-    <div class="bal"><b>${salInr(r.advBal)}</b><span>Balance</span></div>`;
+  const bits = [];
+  if (r.advOpen) bits.push('before ' + salInr(r.advOpen));
+  if (r.advRec) bits.push('cut − ' + salInr(r.advRec));
+  if (newAdv) bits.push('new + ' + salInr(newAdv));
+  return `Advance balance: <b>${r.advBal ? salInr(r.advBal) : '₹0 — cleared ✓'}</b>${bits.length ? ' <span>(' + bits.join(' · ') + ')</span>' : ''}`;
 }
 function salLedgerHTML(id, r) {
   const L = [];
@@ -6485,26 +6498,33 @@ function salCalcHTML(r) {
     rows.push(`<div class="sal-line minus"><span>Advance cut</span><b>− ${salInr(r.advRec)}</b></div>`);
   }
   rows.push(`<div class="sal-line net"><span>${r.advRec ? 'Cash payable' : 'Payable'}</span><b>${salInr(r.net)}</b></div>`);
+  if (r.partPaid && !r.paid) {
+    rows.push(`<div class="sal-line minus"><span>Already paid</span><b>− ${salInr(r.partPaid)}</b></div>`);
+    rows.push(`<div class="sal-line net"><span>Balance to pay</span><b>${salInr(Math.max(0, r.net - r.partPaid))}</b></div>`);
+  }
   if (r.advBal) rows.push(`<div class="sal-line info"><span>Advance balance after this month</span><b>${salInr(r.advBal)}</b></div>`);
   return rows.join('');
 }
 function salActsHTML(id, r) {
+  const small = 'flex:1 1 0;min-width:0;font-size:12px;padding:10px 6px;';
   const nsBtn = r.nosal
-    ? `<button class="sal-btn" style="width:100%;border-color:#dc2626;color:#dc2626" onclick="salToggleNoSal('${id}')">↩ Cancel – give salary this month</button>`
-    : `<button class="sal-btn" style="width:100%" onclick="salToggleNoSal('${id}')">🚫 Absent full month – no salary, advance not reduced</button>`;
+    ? `<button class="sal-btn" style="${small}border-color:#dc2626;color:#dc2626" onclick="salToggleNoSal('${id}')">↩ Undo absent month</button>`
+    : `<button class="sal-btn" style="${small}" onclick="salToggleNoSal('${id}')">🚫 Absent whole month</button>`;
   const cutBtn = (r.advOpen > 0 || r.cut)
     ? (r.cut
-      ? `<button class="sal-btn" style="width:100%;border-color:#2563eb;color:#2563eb" onclick="salToggleCut('${id}')">↩ Give salary in cash – don't cut advance</button>`
-      : `<button class="sal-btn" style="width:100%" onclick="salToggleCut('${id}')">✂ Not giving salary – cut it from advance (${salInr(Math.min(r.advOpen, r.due))})</button>`)
+      ? `<button class="sal-btn" style="${small}border-color:#2563eb;color:#2563eb" onclick="salToggleCut('${id}')">↩ Undo advance cut</button>`
+      : `<button class="sal-btn" style="${small}" onclick="salToggleCut('${id}')">✂ Cut salary from advance</button>`)
     : '';
   const paidTxt = r.paid ? `Paid on ${attLongDate(r.paidOn || attTodayStr())}` : '';
+  const okPay = r.base && !r.nosal ? '' : ' disabled style="opacity:.5"';
   return (r.paid
       ? `<button class="sal-btn unpay" onclick="salSetPaid('${id}',false)">↩ Mark as unpaid</button>`
-      : `<button class="sal-btn pay" onclick="salSetPaid('${id}',true)"${r.base && !r.nosal ? '' : ' disabled style="opacity:.5"'}>✓ Mark as paid</button>`) +
+      : `<button class="sal-btn pay" onclick="salPayDialog('${id}')"${okPay}>${r.partPaid ? '✓ Pay balance' : '✓ Mark as paid'}</button>`) +
+    (!r.paid && r.partPaid ? `<button class="sal-btn" onclick="salSetPaid('${id}',false)">↩ Clear part payment</button>` : '') +
     `<button class="sal-btn" onclick="salPayslip('${id}')"${r.base ? '' : ' disabled style="opacity:.5"'}>🧾 Payslip</button>` +
-    (paidTxt ? `<div class="att-hint" style="width:100%;margin:0">${paidTxt}</div>` : '') + cutBtn + nsBtn;
+    (paidTxt ? `<div class="att-hint" style="width:100%;margin:0">${paidTxt}</div>` : '') +
+    `<div style="display:flex;gap:8px;width:100%">${cutBtn}${nsBtn}</div>`;
 }
-
 function salToggle(id) {
   _salOpen = _salOpen === id ? null : id;
   document.querySelectorAll('#sal-list .sal-item').forEach(el => {
@@ -6525,9 +6545,10 @@ function salRefreshItem(id) {
   const pill = document.getElementById('sal-pill-' + id);
   if (pill) { pill.className = 'sal-pill ' + st; pill.textContent = salPillText(r, st); }
   const pc = document.getElementById('sal-pend-' + id); if (pc) pc.innerHTML = salPendColHTML(r, id, _salMonth);
-  const ac = document.getElementById('sal-advc-' + id); if (ac) ac.innerHTML = salAdvColHTML(r);
-  const ow = document.getElementById('sal-owe-' + id); if (ow) ow.innerHTML = salOweHTML(s, r, _salMonth);
+  const ow = document.getElementById('sal-owe-' + id), od = document.getElementById('sal-owedyn-' + id);
+  if (od) { od.innerHTML = salOweHTML(s, r, _salMonth); ow.classList.toggle('clear', !salPendInfo(id, r, _salMonth).total); }
   const as = document.getElementById('sal-advstats-' + id); if (as) as.innerHTML = salAdvStatsHTML(r);
+  const ac = document.getElementById('sal-advc-' + id); if (ac) ac.innerHTML = salAdvColHTML(r);
   const calc = document.getElementById('sal-calc-' + id); if (calc) calc.innerHTML = salCalcHTML(r);
   const acts = document.getElementById('sal-acts-' + id); if (acts) acts.innerHTML = salActsHTML(id, r);
   const lg = document.getElementById('sal-ledger-' + id); if (lg) lg.innerHTML = salLedgerHTML(id, r);
@@ -6559,6 +6580,7 @@ function salEdit(id, field, v) {
     const m = SAL_REC[ym] || (SAL_REC[ym] = {});
     const r = m[id] || (m[id] = {});
     if (field === 'note' || field === 'givenOn' || field === 'advOn') { const t = String(v).trim(); if (t) r[field] = t; else delete r[field]; }
+    else if (field === 'pendOv') { const t = String(v).trim(); if (t === '') delete r.pendOv; else r.pendOv = Math.max(0, salMoney(t)); }
     else { const n = salMoney(v); if (n) r[field] = n; else delete r[field]; }
     if (field === 'given') {                       // auto-date the amount; clear date if amount removed
       const di = document.getElementById('sal-givenon-' + id);
@@ -6604,6 +6626,62 @@ function salDelAdvance(id, aid) {
   toast('🗑 Advance deleted');
 }
 
+function salPayDialog(id) {
+  if (!attIsAdmin()) { toast('⚠ Admin access only'); return; }
+  const s = ATT_STAFF.find(x => x.id === id); if (!s) return;
+  const ym = _salMonth, r = salCalc(s, ym);
+  if (!r.base) { toast('⚠ Enter the monthly salary first'); return; }
+  const total = salPendInfo(id, r, ym).total;
+  if (!total) { salSetPaid(id, true); return; }          // nothing to pay in cash (e.g. fully cut from advance)
+  const old = document.getElementById('sal-pay-ov'); if (old) old.remove();
+  const ov = document.createElement('div'); ov.id = 'sal-pay-ov';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
+  ov.innerHTML = `<div style="background:#fff;border-radius:18px;padding:18px;width:100%;max-width:380px;font-family:'DM Sans',sans-serif;">
+    <div style="font:800 16px 'Syne',sans-serif;margin-bottom:4px">${attEsc(s.name)} — kitna paid kiya?</div>
+    <div style="font-size:12.5px;color:#666;margin-bottom:10px">Total pending: <b>${salInr(total)}</b></div>
+    <input id="sal-pay-amt" type="number" min="0" inputmode="decimal" value="${total}" style="width:100%;font-size:18px;font-weight:700;padding:12px;border:1.5px solid #ddd;border-radius:12px;box-sizing:border-box">
+    <div id="sal-pay-note" style="font-size:12.5px;margin:10px 0 14px;min-height:18px;font-weight:600"></div>
+    <div style="display:flex;gap:8px">
+      <button class="sal-btn" style="flex:1" onclick="document.getElementById('sal-pay-ov').remove()">Cancel</button>
+      <button class="sal-btn pay" style="flex:1" id="sal-pay-ok">✓ Confirm</button>
+    </div></div>`;
+  document.body.appendChild(ov);
+  const inp = document.getElementById('sal-pay-amt'), note = document.getElementById('sal-pay-note');
+  const upd = () => {
+    const a = salMoney(inp.value);
+    if (!a) { note.style.color = '#999'; note.textContent = 'Enter the amount paid'; }
+    else if (a > total) { note.style.color = '#2563eb'; note.textContent = salInr(a - total) + ' extra → will be added to advance'; }
+    else if (a < total) { note.style.color = '#d97706'; note.textContent = salInr(total - a) + ' will stay pending'; }
+    else { note.style.color = '#16a34a'; note.textContent = 'Fully paid ✓'; }
+  };
+  inp.oninput = upd; upd();
+  document.getElementById('sal-pay-ok').onclick = () => salApplyPayment(id, salMoney(inp.value));
+  setTimeout(() => { inp.focus(); inp.select(); }, 50);
+}
+function salApplyPayment(id, amt) {
+  if (!amt) { toast('⚠ Enter the amount paid'); return; }
+  const s = ATT_STAFF.find(x => x.id === id); if (!s) return;
+  const ym = _salMonth, r = salCalc(s, ym), P = salPendInfo(id, r, ym), today = attTodayStr();
+  const items = P.prev.map(x => ({ m: x.m, owed: x.amt }));
+  if (P.cur > 0) items.push({ m: ym, owed: P.cur });
+  const recOf = m => { const mm = SAL_REC[m] || (SAL_REC[m] = {}); return mm[id] || (mm[id] = {}); };
+  const touched = new Set([ym]);
+  let rem = amt, left = 0;
+  items.forEach(it => {                                   // oldest month first
+    if (rem <= 0) { left += it.owed; return; }
+    const rc = recOf(it.m); touched.add(it.m);
+    if (rem >= it.owed) { rc.paid = true; rc.paidOn = today; delete rc.partPaid; rem -= it.owed; }
+    else { rc.partPaid = (rc.partPaid || 0) + rem; left += it.owed - rem; rem = 0; }
+  });
+  if (rem > 0) {                                          // more than pending → advance
+    const rc = recOf(ym); rc.advGive = (rc.advGive || 0) + rem; if (!rc.advOn) rc.advOn = today;
+  }
+  salPersistRec();
+  touched.forEach(m => { clearTimeout(_salSaveT[m]); salSaveMonth(m); });
+  const ov = document.getElementById('sal-pay-ov'); if (ov) ov.remove();
+  renderSalary(); salRefreshAdminCard();
+  toast(rem > 0 ? '✓ Paid. ' + salInr(rem) + ' added to advance' : left > 0 ? '✓ Part paid. ' + salInr(left) + ' still pending' : '✓ Fully paid: ' + s.name);
+}
 function salToggleCut(id) {
   if (!attIsAdmin()) { toast('⚠ Admin access only'); return; }
   const s = ATT_STAFF.find(x => x.id === id); if (!s) return;
@@ -6639,7 +6717,7 @@ function salSetPaid(id, paid) {
   if (paid && !salCalc(s, ym).base) { toast('⚠ Enter the monthly salary first'); return; }
   const m = SAL_REC[ym] || (SAL_REC[ym] = {});
   const r = m[id] || (m[id] = {});
-  if (paid) { r.paid = true; r.paidOn = attTodayStr(); } else { delete r.paid; delete r.paidOn; if (!Object.keys(r).length) delete m[id]; }
+  if (paid) { r.paid = true; r.paidOn = attTodayStr(); } else { delete r.paid; delete r.paidOn; delete r.partPaid; if (!Object.keys(r).length) delete m[id]; }
   clearTimeout(_salSaveT[ym]);
   salSaveMonth(ym);
   salRefreshItem(id);
