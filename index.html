@@ -2231,6 +2231,112 @@ select.qbill-input{
   .att-seg button,.att-tab,.mgmt-card{transition:none;}
 }
 
+/* ════════════════════════════════════
+   SALARY (Admin → Management → Salary)
+════════════════════════════════════ */
+.sal-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.sal-tile{background:#fff;border-radius:12px;padding:11px 6px 10px;text-align:center;box-shadow:var(--sh);border-top:3px solid var(--line);}
+.sal-tile b{display:block;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;line-height:1.15;color:var(--ink);word-break:break-word;}
+.sal-tile span{display:block;font-size:10px;font-weight:700;color:var(--mid);margin-top:3px;}
+.sal-tile.T{border-top-color:var(--fire);} .sal-tile.T b{color:var(--fire);}
+.sal-tile.P{border-top-color:var(--ok);} .sal-tile.P b{color:var(--ok);}
+.sal-tile.D{border-top-color:#D97706;} .sal-tile.D b{color:#D97706;}
+.sal-tile.V{border-top-color:var(--blue);} .sal-tile.V b{color:var(--blue);}
+.sal-item{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border-left:5px solid var(--line);overflow:hidden;}
+.sal-item.paid{border-left-color:var(--ok);}
+.sal-item.pend{border-left-color:#D97706;}
+.sal-item.noset{border-left-color:var(--soft);}
+.sal-head{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:none;border:none;text-align:left;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.sal-head:focus-visible{outline:2px solid var(--fire);outline-offset:-2px;}
+.sal-who{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
+.sal-amt{text-align:right;flex-shrink:0;}
+.sal-amt b{display:block;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--ink);}
+.sal-pill{display:inline-block;margin-top:3px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:800;}
+.sal-pill.paid{background:var(--ok-pale);color:var(--ok);}
+.sal-pill.pend{background:#FFF7E6;color:#D97706;}
+.sal-pill.noset{background:#F1F1EE;color:var(--mid);}
+.sal-chev{font-size:20px;color:var(--soft);transition:transform .15s;flex-shrink:0;line-height:1;}
+.sal-item.open .sal-chev{transform:rotate(90deg);}
+.sal-body{display:none;padding:0 14px 14px;border-top:1px solid var(--line);}
+.sal-item.open .sal-body{display:block;}
+.sal-att{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 4px;}
+.sal-att span{font-size:11px;font-weight:700;padding:4px 9px;border-radius:20px;background:#F6F6F3;color:var(--mid);}
+.sal-att .P{background:var(--ok-pale);color:var(--ok);} .sal-att .A{background:var(--no-pale);color:var(--no);}
+.sal-att .H{background:#FFF7E6;color:#D97706;} .sal-att .L{background:#EFF4FF;color:var(--blue);}
+.sal-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.sal-f label{display:block;font-size:10.5px;font-weight:800;color:var(--mid);margin-bottom:4px;letter-spacing:.3px;}
+.sal-f input{width:100%;padding:10px 11px;border-radius:10px;border:1.5px solid var(--line);font:600 14px 'DM Sans',sans-serif;color:var(--ink);background:#fff;}
+.sal-f input:focus{outline:none;border-color:var(--fire);}
+.sal-f.full{grid-column:1 / -1;}
+.sal-calc{margin-top:12px;border-radius:12px;background:#FAFAF8;padding:4px 12px;}
+.sal-line{display:flex;justify-content:space-between;gap:10px;padding:8px 0;font-size:12.5px;color:var(--mid);border-bottom:1px dashed var(--line);}
+.sal-line:last-child{border-bottom:none;}
+.sal-line b{color:var(--ink);font-weight:700;}
+.sal-line.minus b{color:var(--no);} .sal-line.plus b{color:var(--ok);}
+.sal-line.net{font-size:14px;color:var(--ink);font-weight:800;}
+.sal-line.net b{font-family:'Syne',sans-serif;font-size:16px;color:var(--fire);}
+.sal-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.sal-btn{flex:1 1 130px;padding:11px 10px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font:800 12.5px 'DM Sans',sans-serif;color:var(--ink);cursor:pointer;}
+.sal-btn:hover{border-color:var(--fire);color:var(--fire);}
+.sal-btn.pay{background:var(--ok);border-color:var(--ok);color:#fff;}
+.sal-btn.pay:hover{background:#12873D;color:#fff;}
+.sal-btn.unpay{background:#FFF7E6;border-color:rgba(217,119,6,.4);color:#D97706;}
+
+.sal-cols{display:flex;align-items:center;gap:10px;padding:0 14px 0 14px;font-size:10px;font-weight:800;color:var(--mid);letter-spacing:.4px;text-transform:uppercase;}
+.sal-cols .n{flex:1;min-width:0;padding-left:48px;}
+.sal-cols .c{width:84px;text-align:right;flex-shrink:0;}
+.sal-cols .x{width:14px;flex-shrink:0;}
+.sal-advc{width:84px;text-align:right;flex-shrink:0;}
+.sal-advc b{display:block;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--blue);}
+.sal-advc b.nil{color:var(--soft);font-weight:600;}
+.sal-pend{width:84px;text-align:right;flex-shrink:0;}
+.sal-pend b{display:block;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:#D97706;}
+.sal-pend b.nil{color:var(--soft);font-weight:600;}
+.sal-pend small{display:block;font-size:9.5px;font-weight:700;color:var(--mid);margin-top:2px;line-height:1.25;}
+.sal-advc small{display:block;font-size:9.5px;font-weight:700;color:var(--mid);margin-top:2px;line-height:1.25;}
+.sal-amt{width:84px;}
+.sal-adv-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:12.5px;color:var(--ink);}
+.sal-adv-row:last-of-type{border-bottom:none;}
+.sal-adv-row .t{flex:1;min-width:0;line-height:1.45;}
+.sal-adv-row small{display:block;font-size:11px;color:var(--mid);}
+.sal-adv-add{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;}
+.sal-adv-add .sal-f.full{grid-column:1 / -1;}
+.sal-advblk{margin-top:12px;border:1.5px solid #F5D9C4;background:#FFF8F2;border-radius:14px;padding:12px;}
+.sal-advblk-t{font-size:11px;font-weight:800;letter-spacing:.6px;color:var(--fire);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.sal-advblk .sal-fields{margin-top:0;}
+.sal-advstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px;}
+.sal-advstats div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;}
+.sal-advstats b{display:block;font:800 14px 'Syne',sans-serif;color:var(--ink);}
+.sal-advstats span{display:block;font-size:9.5px;font-weight:700;color:var(--mid);margin-top:2px;letter-spacing:.2px;}
+.sal-advstats .bal b{color:var(--fire);} .sal-advstats .rec b{color:var(--no);} .sal-advstats .new b{color:var(--ok);}
+@media(max-width:420px){.sal-advstats{grid-template-columns:1fr 1fr;}}
+.sal-owe{margin-top:12px;border-radius:14px;padding:12px 14px;background:#F2F7FF;border:1.5px solid #CFE0FF;}
+.sal-owe.clear{background:#F1FAF4;border-color:#C9ECD4;}
+.sal-owe-t{font-size:10.5px;font-weight:800;letter-spacing:.5px;color:var(--mid);}
+.sal-owe-n{font:800 24px 'Syne',sans-serif;color:var(--blue);margin:2px 0 4px;}
+.sal-owe.clear .sal-owe-n{color:var(--ok);}
+.sal-owe-l{font-size:12px;color:var(--mid);line-height:1.7;}
+.sal-owe-l div{display:flex;justify-content:space-between;gap:10px;border-top:1px dashed #CFE0FF;padding-top:3px;margin-top:3px;}
+.sal-owe-l b{color:var(--ink);}
+.sal-line.info{font-size:11.5px;} .sal-line.info b{color:var(--blue);}
+@media(max-width:480px){
+  .sal-sum{grid-template-columns:repeat(2,1fr);}
+  .sal-head{gap:8px;padding:12px 10px;}
+  .sal-head .att-av{width:32px;height:32px;font-size:13px;}
+  .sal-cols{padding:0 10px;gap:8px;}
+  .sal-cols .n{padding-left:40px;}
+  .sal-cols .c,.sal-advc,.sal-pend,.sal-amt{width:68px;}
+  .sal-adv-add{grid-template-columns:1fr 1fr;}
+  .sal-adv-add .sal-f.mon{grid-column:1 / -1;}
+}
+.sal-set{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.sal-chk{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--ink);margin-top:12px;cursor:pointer;}
+.sal-chk input{width:18px;height:18px;accent-color:var(--fire);}
+@media(max-width:480px){
+  .sal-tile b{font-size:14px;}
+  .sal-fields,.sal-set{grid-template-columns:1fr;}
+}
+
 /* ── Kotak 2W / 4W — Repo File Number + Issue Date ── */
 .req-star{color:#DC2626;font-weight:800;margin-left:2px;font-size:14px;line-height:1;}
 .kotak-repo{
@@ -2924,6 +3030,14 @@ select.qbill-input{
         </div>
         <div class="mgmt-go">›</div>
       </button>
+      <button class="mgmt-card" onclick="openSalary()" style="margin-top:10px">
+        <div class="mgmt-ico">💰</div>
+        <div class="mgmt-txt">
+          <div class="mgmt-name">Salary</div>
+          <div class="mgmt-desc" id="adm-sal-sub">Monthly salary, advance and payable for all staff</div>
+        </div>
+        <div class="mgmt-go">›</div>
+      </button>
     </div>
 
     <!-- User management -->
@@ -3147,6 +3261,35 @@ select.qbill-input{
       <div class="att-list" id="att-staff-list"></div>
     </div>
 
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SALARY (Admin → Management → Salary)
+════════════════════════════════════ -->
+<div class="view" id="view-salary">
+  <div class="att-header">
+    <button class="att-back" onclick="salBack()">‹ Back to Admin</button>
+    <div class="att-head-row">
+      <div class="att-icon">💰</div>
+      <div>
+        <div class="att-title">Salary</div>
+        <div class="att-sub" id="sal-sub">Staff salary</div>
+      </div>
+    </div>
+  </div>
+  <div class="att-body">
+    <div class="att-bar">
+      <button class="att-nav" onclick="salShiftMonth(-1)" aria-label="Previous month">‹</button>
+      <div class="att-pick" style="cursor:default"><span class="att-pick-main" id="sal-month-label">—</span><span class="att-pick-tag" id="sal-month-tag"></span></div>
+      <button class="att-nav" onclick="salShiftMonth(1)" aria-label="Next month">›</button>
+      <button class="att-jump" onclick="salGoThisMonth()">Current payroll</button>
+    </div>
+    <div class="sal-sum" id="sal-summary"></div>
+    <div class="att-list" id="sal-list"></div>
+    <button class="att-export" id="sal-export" onclick="salExportCSV()">📊 Download salary sheet (CSV)</button>
+    <div class="att-hint" style="margin-top:14px">Salary of a month is paid in the following month (October salary is paid in November). Absent, half-day and leave days do <b>not</b> reduce salary. Payable = Monthly salary + Bonus − Other deduction. The advance is cut from salary only in a month where you tap “Not giving salary – cut it from advance”; otherwise the full salary is paid and the advance stays. If you give more than the salary (e.g. ₹50,000 on a ₹10,000 salary), the extra becomes advance. In a month you do not give salary, tap the cut button and that month's salary cancels the advance.</div>
+    </div>
   </div>
 </div>
 
@@ -3885,6 +4028,7 @@ function renderAdminPanel() {
   initTimeoutUI(); // refresh timeout settings UI
   renderViewerPasswordsAdmin(); // refresh finance viewer passwords
   attRefreshAdminCard(); // Management → Attendance summary
+  salRefreshAdminCardCloud(); // Management → Salary summary
 }
 
 function renderAuditLog() {
@@ -5941,6 +6085,7 @@ function attRemoveStaff(id) {
 
 // ── Admin panel card ("Management → Attendance") ────────────────────────────
 function attRenderAdminCard() {
+  if (typeof salRefreshAdminCard === 'function') { try { salRefreshAdminCard(); } catch (e) {} }
   const el = document.getElementById('adm-att-sub'); if (!el) return;
   const staff = attActiveStaff();
   if (!staff.length) { el.textContent = 'Add staff and mark daily attendance'; return; }
@@ -5960,11 +6105,635 @@ async function attRefreshAdminCard() {
   if (a || b) attRenderAdminCard();
 }
 
+
+// ════════════════════════════════════
+//  SALARY  (Admin → Management → Salary)
+//  ★ Admin-only. Staff come from the Attendance staff list; days worked /
+//    absent / half / leave come from the Attendance records.
+//  ★ Salary of month M is PAID in month M+1, so the page opens on last month.
+//  ★ Advances: each has an amount + monthly recovery; every month the
+//    recovery is deducted and the balance goes down until it reaches 0.
+//  ★ Saved to localStorage first, then Firebase
+//    (kw3_sal_cfg = salary + settings + advances, kw3_sal/YYYY-MM = bonus/other/paid).
+// ════════════════════════════════════
+const SAL_CFG_PATH = '/kw3_sal_cfg.json';
+const salMonthPath = ym => '/kw3_sal/' + ym + '.json';
+const SAL_DEFAULT = () => ({ base: {}, hist: {}, adv: {}, divisor: 30, halfCut: 0.5, leavePaid: true });
+let SAL_CFG = SAL_DEFAULT();   // base: { staffId: salary }, adv: { staffId: [{id, from, amount, emi, date, note}] }
+let SAL_REC = {};      // { 'YYYY-MM': { staffId: { bonus, adv(other deduction), note, paid, paidOn } } }
+let _salMonth = null, _salOpen = null, _salWrites = 0, _salSeq = 0, _salTimer = null, _salSaveT = {};
+
+function salNormCfg(c) {
+  const n = Object.assign(SAL_DEFAULT(), c || {});
+  if (!n.base || typeof n.base !== 'object') n.base = {};
+  if (!n.adv || typeof n.adv !== 'object') n.adv = {};
+  if (!n.hist || typeof n.hist !== 'object') n.hist = {};
+  Object.keys(n.hist).forEach(k => {
+    const v = n.hist[k];
+    n.hist[k] = (Array.isArray(v) ? v : (v && typeof v === 'object' ? Object.values(v) : [])).filter(x => x && x.from && salMoney(x.amount));
+  });
+  Object.keys(n.adv).forEach(k => {
+    const v = n.adv[k];
+    n.adv[k] = (Array.isArray(v) ? v : (v && typeof v === 'object' ? Object.values(v) : [])).filter(Boolean);
+  });
+  return n;
+}
+function salLoadLocal() {
+  try { SAL_CFG = salNormCfg(JSON.parse(localStorage.getItem('kw3_sal_cfg') || 'null')); } catch (e) { SAL_CFG = SAL_DEFAULT(); }
+  try { SAL_REC = JSON.parse(localStorage.getItem('kw3_sal_rec') || '{}') || {}; } catch (e) { SAL_REC = {}; }
+}
+function salPersistCfg() { try { localStorage.setItem('kw3_sal_cfg', JSON.stringify(SAL_CFG)); } catch (e) {} }
+function salPersistRec() { try { localStorage.setItem('kw3_sal_rec', JSON.stringify(SAL_REC)); } catch (e) {} }
+salLoadLocal();
+
+const salInr = n => '₹' + Math.round(n).toLocaleString('en-IN');
+const salMoney = v => { const n = parseFloat(v); return isFinite(n) && n > 0 ? n : 0; };
+function salRec(ym, id) { return ((SAL_REC[ym] || {})[id]) || {}; }
+
+// ── month helpers (salary month M is paid in M+1) ───────────────────────────
+function salAddMonths(ym, n) {
+  const p = ym.split('-').map(Number), d = new Date(p[0], p[1] - 1 + n, 1);
+  return d.getFullYear() + '-' + attPad(d.getMonth() + 1);
+}
+function salMonthIdx(ym) { return +ym.slice(0, 4) * 12 + +ym.slice(5, 7); }
+function salMonthName(ym, long) {
+  const p = ym.split('-').map(Number);
+  return new Date(p[0], p[1] - 1, 1).toLocaleDateString('en-IN', long ? { month: 'long', year: 'numeric' } : { month: 'short', year: 'numeric' });
+}
+function salCurrentPayroll() { return salAddMonths(attTodayStr().slice(0, 7), -1); }
+
+// ── advances ────────────────────────────────────────────────────────────────
+function salAdvList(id) { const l = SAL_CFG.adv[id]; return Array.isArray(l) ? l.filter(Boolean) : []; }
+// Recovery for payroll month ym: each advance is recovered by its monthly amount starting at its "from" month.
+function salAdvInfo(id, ym) {
+  let rec = 0, bal = 0; const items = [];
+  salAdvList(id).forEach(a => {
+    const amt = salMoney(a.amount);
+    if (!amt || !a.from || a.from > ym) return;
+    const emi = Math.min(amt, salMoney(a.emi) || amt);
+    const n = salMonthIdx(ym) - salMonthIdx(a.from);
+    const before = Math.min(amt, emi * n);
+    const r = Math.min(emi, amt - before), b = amt - before - r;
+    rec += r; bal += b;
+    if (r > 0 || b > 0) items.push({ a, amt, emi, r, b });
+  });
+  return { rec, bal, items };
+}
+
+// ── salary history: a raise/change applies from the chosen month onwards ────
+function salHist(id) { const l = SAL_CFG.hist && SAL_CFG.hist[id]; return Array.isArray(l) ? l.filter(Boolean).slice().sort((a, b) => a.from < b.from ? -1 : 1) : []; }
+function salBaseFor(id, ym) {
+  let v = salMoney(SAL_CFG.base[id]);          // original salary (before any change)
+  salHist(id).forEach(h => { if (h.from <= ym) v = salMoney(h.amount); });
+  return v;
+}
+function salHistHTML(id, ym) {
+  const h = salHist(id), first = salMoney(SAL_CFG.base[id]);
+  if (!h.length) return '';
+  const parts = [];
+  if (first) parts.push(`${salInr(first)} <small>(start)</small>`);
+  h.forEach(x => parts.push(`${salInr(salMoney(x.amount))} <small>from ${salMonthName(x.from)}</small>`));
+  return `<div class="att-hint" style="margin:6px 0 0">Salary history: ${parts.join(' → ')}</div>`;
+}
+
+// ── SIMPLE ADVANCE: money given above the salary becomes advance; every month's
+//    salary first cancels the running advance, until it reaches zero. ────────
+function salRecMonths(id) {
+  const out = [];
+  Object.keys(SAL_REC).forEach(m => { const r = (SAL_REC[m] || {})[id]; if (r && (salMoney(r.given) || salMoney(r.advGive))) out.push(m); });
+  salAdvList(id).forEach(a => { if (a && a.from && salMoney(a.amount)) out.push(a.from); });   // older advances
+  return out.sort();
+}
+function salAdvState(id, ym) {
+  const months = salRecMonths(id), start = months[0];
+  const res = { open: 0, due: 0, rec: 0, payable: 0, given: 0, add: 0, extra: 0, bal: 0 };
+  const legacy = m => salAdvList(id).reduce((t, a) => t + (a && a.from === m ? salMoney(a.amount) : 0), 0);
+  if (!start || start > ym) {
+    const r = salRec(ym, id), due = r.nosal ? 0 : Math.max(0, salBaseFor(id, ym) + salMoney(r.bonus) - salMoney(r.adv));
+    return Object.assign(res, { due, payable: due });
+  }
+  let bal = 0;
+  for (let m = start; m <= ym; m = salAddMonths(m, 1)) {
+    const r = salRec(m, id);
+    const open = bal + legacy(m);
+    const due = r.nosal ? 0 : Math.max(0, salBaseFor(id, m) + salMoney(r.bonus) - salMoney(r.adv));   // absent whole month: no salary, no advance cut
+    const rec = r.cut ? Math.min(open, due) : 0, payable = due - rec;   // advance is cut only in months flagged "not giving salary"
+    const given = salMoney(r.given);
+    const add = given > payable ? given - payable : 0;
+    const extra = salMoney(r.advGive);              // advance given directly (on top of salary)
+    bal = open - rec + add + extra;
+    if (m === ym) return { open, due, rec, payable, given, add, extra, bal };
+  }
+  return res;
+}
+
+// Unpaid salary of earlier months + this month = what is still to be given to this staff member
+function salOwed(id, ym) {
+  let start = null;
+  Object.keys(ATT_REC || {}).forEach(m => { const d = ATT_REC[m] || {}; if (Object.keys(d).some(k => d[k] && d[k][id]) && (!start || m < start)) start = m; });
+  Object.keys(SAL_REC).forEach(m => { if ((SAL_REC[m] || {})[id] && (!start || m < start)) start = m; });
+  const items = [];
+  if (start) {
+    let m = start; if (salMonthIdx(ym) - salMonthIdx(m) > 24) m = salAddMonths(ym, -24);
+    for (; m < ym; m = salAddMonths(m, 1)) {
+      const r = salRec(m, id);
+      if (r.paid || r.nosal || !salBaseFor(id, m)) continue;
+      const av = salAdvState(id, m);
+      if (av.payable > 0) items.push({ m, amt: av.payable });
+    }
+  }
+  return items;
+}
+function salPendInfo(id, r, ym) {
+  const prev = salOwed(id, ym), prevSum = prev.reduce((t, x) => t + x.amt, 0);
+  const cur = (r.paid || r.nosal || !r.base) ? 0 : r.net;
+  return { prev, prevSum, cur, total: prevSum + cur, months: prev.length + (cur ? 1 : 0) };
+}
+function salPendColHTML(r, id, ym) {
+  const p = salPendInfo(id, r, ym);
+  if (!p.total) return '<b class="nil">—</b>';
+  return `<b>${salInr(p.total)}</b>` + (p.months > 1 ? `<small>${p.months} months</small>` : '');
+}
+function salOweHTML(s, r, ym) {
+  const P = salPendInfo(s.id, r, ym), prev = P.prev, cur = P.cur, total = P.total;
+  const L = prev.map(x => `<div><span>${salMonthName(x.m)} salary (unpaid)</span><b>${salInr(x.amt)}</b></div>`);
+  if (cur) L.push(`<div><span>${salMonthName(ym)} salary${r.advRec ? ' (after advance cut)' : ''}</span><b>${salInr(cur)}</b></div>`);
+  return `<div class="sal-owe${total ? '' : ' clear'}"><div class="sal-owe-t">NET PAYABLE — ALL UNPAID MONTHS</div>
+    <div class="sal-owe-n">${total ? salInr(total) : '₹0 — nothing pending ✓'}</div>
+    ${L.length ? `<div class="sal-owe-l">${L.join('')}</div>` : ''}</div>`;
+}
+
+// Pay for one staff member in one salary month
+function salCalc(s, ym) {
+  const days = new Date(+ym.slice(0, 4), +ym.slice(5, 7), 0).getDate();
+  const c = attCounts(s.id, ym, days);
+  const base = salBaseFor(s.id, ym);
+  const div = Math.max(1, parseFloat(SAL_CFG.divisor) || 30);
+  const cut = isFinite(parseFloat(SAL_CFG.halfCut)) ? parseFloat(SAL_CFG.halfCut) : 0.5;
+  // Salary is NOT reduced for absent / half day / leave
+  const perDay = 0, lost = 0, absDed = 0;
+  const r = salRec(ym, s.id);
+  const bonus = salMoney(r.bonus), other = salMoney(r.adv);
+  const av = salAdvState(s.id, ym);
+  const net = av.payable;
+  return { c, base, givenOn: r.givenOn || '', nosal: !!r.nosal, cut: !!r.cut, perDay, lost, absDed, bonus, other, due: av.due, advOpen: av.open, advRec: av.rec, advNew: av.add, advGive: av.extra, advOn: r.advOn || '', given: av.given, advBal: av.bal, advItems: [], net, paid: !!r.paid, paidOn: r.paidOn || '', note: r.note || '' };
+}
+function salStaff(ym) { return attMonthStaff(ym); }
+
+// ── cloud ───────────────────────────────────────────────────────────────────
+async function salSaveCfg() {
+  salPersistCfg();
+  _salWrites++; _salSeq++;
+  try { await attPut('PUT', SAL_CFG_PATH, Object.assign({}, SAL_CFG, { ts: Date.now() })); }
+  finally { _salWrites--; _salSeq++; }
+}
+async function salSaveMonth(ym) {
+  salPersistRec();
+  _salWrites++; _salSeq++;
+  try { await attPut('PUT', salMonthPath(ym), SAL_REC[ym] || {}); }
+  finally { _salWrites--; _salSeq++; }
+}
+async function salLoadCfg() {
+  if (!firebaseConfigured || !_isOnline) return false;
+  const seq = _salSeq;
+  try {
+    const res = await fetch(await fbUrl(SAL_CFG_PATH));
+    if (!res.ok) return false;
+    const text = await res.text();
+    const pending = await queueCount();
+    if (_salWrites > 0 || seq !== _salSeq || pending > 0) return false;
+    if (!text || text === 'null') { if (Object.keys(SAL_CFG.base).length || Object.keys(SAL_CFG.adv).length || Object.keys(SAL_CFG.hist).length) await salSaveCfg(); return false; }
+    const r = JSON.parse(text); delete r.ts;
+    const next = salNormCfg(r);
+    if (JSON.stringify(next) === JSON.stringify(SAL_CFG)) return false;
+    SAL_CFG = next; salPersistCfg();
+    return true;
+  } catch (e) { return false; }
+}
+async function salLoadMonth(ym) {
+  if (!firebaseConfigured || !_isOnline) return false;
+  const seq = _salSeq;
+  try {
+    const res = await fetch(await fbUrl(salMonthPath(ym)));
+    if (!res.ok) return false;
+    const text = await res.text();
+    const pending = await queueCount();
+    if (_salWrites > 0 || seq !== _salSeq || pending > 0) return false;
+    const remote = (text && text !== 'null') ? JSON.parse(text) : {};
+    if (JSON.stringify(remote) === JSON.stringify(SAL_REC[ym] || {})) return false;
+    SAL_REC[ym] = remote; salPersistRec();
+    return true;
+  } catch (e) { return false; }
+}
+
+// ── open / close ────────────────────────────────────────────────────────────
+function openSalary() {
+  if (!attIsAdmin()) { toast('⚠ Admin access only'); return; }
+  _salMonth = salCurrentPayroll();
+  _salOpen = null;
+  switchView('salary', document.getElementById('admin-nav-btn'));
+}
+function salBack() { switchView('admin', document.getElementById('admin-nav-btn')); }
+function salOnOpen() {
+  if (!_salMonth) _salMonth = salCurrentPayroll();
+  salSyncSettingsUI();
+  renderSalary();
+  salRefreshFromCloud();
+  if (!_salTimer) {
+    _salTimer = setInterval(() => {
+      const v = document.getElementById('view-salary');
+      if (v && v.classList.contains('active') && !salIsTyping()) salRefreshFromCloud();
+    }, 12000);
+  }
+}
+function salIsTyping() { const a = document.activeElement; return !!(a && a.closest && a.closest('#view-salary') && (a.tagName === 'INPUT')); }
+async function salRefreshFromCloud() {
+  let changed = await attLoadStaff();
+  if (await salLoadCfg()) { changed = true; salSyncSettingsUI(); }
+  if (await attLoadMonth(_salMonth)) changed = true;
+  if (await salLoadMonth(_salMonth)) changed = true;
+  if (changed && !salIsTyping()) renderSalary();
+}
+
+// ── month nav ───────────────────────────────────────────────────────────────
+function salShiftMonth(n) { _salMonth = salAddMonths(_salMonth, n); _salOpen = null; renderSalary(); salRefreshFromCloud(); }
+function salGoThisMonth() { _salMonth = salCurrentPayroll(); _salOpen = null; renderSalary(); salRefreshFromCloud(); }
+
+// ── render ──────────────────────────────────────────────────────────────────
+function salHeadAmt(r) {
+  if (r.nosal) return '₹0';
+  if (!r.base) return '—';
+  return salInr(r.due) + (r.advRec ? `<small style="display:block;font:700 9.5px 'DM Sans',sans-serif;color:var(--mid);margin-top:1px">cash ${salInr(r.net)}</small>` : '');
+}
+function salStatus(r) { return r.nosal ? 'noset' : (!r.base ? 'noset' : (r.paid ? 'paid' : 'pend')); }
+function salPillText(r, st) { return r.nosal ? 'No salary' : (st === 'paid' ? '✓ Paid' : st === 'pend' ? 'Pending' : 'Set salary'); }
+
+function renderSalary() {
+  const ym = _salMonth;
+  document.getElementById('sal-month-label').textContent = salMonthName(salAddMonths(ym, 1), true);  // running (pay) month
+  document.getElementById('sal-month-tag').textContent = 'Salary of ' + salMonthName(ym, true);  // previous month
+  const staff = salStaff(ym);
+  const n = attActiveStaff().length;
+  document.getElementById('sal-sub').textContent = n ? 'Salary for ' + salMonthName(ym, true).split(' ')[0] + ' · ' + n + (n === 1 ? ' staff member' : ' staff members') : 'No staff added yet';
+  const list = document.getElementById('sal-list'), sum = document.getElementById('sal-summary');
+  document.getElementById('sal-export').style.display = staff.length ? '' : 'none';
+  if (!staff.length) {
+    sum.innerHTML = '';
+    list.innerHTML = `<div class="att-empty"><b>No staff added yet</b>Add your staff in Attendance first, then set their salary here.
+      <br><button class="add-user-btn" onclick="openAttendance();setTimeout(()=>attSetTab('staff'),30)">+ Add staff</button></div>`;
+    return;
+  }
+  salRenderSummary();
+  list.innerHTML = `<div class="sal-cols"><span class="n">Staff</span><span class="c">Advance balance</span><span class="c">Pending</span><span class="c">Salary</span><span class="x"></span></div>` +
+    staff.map(s => salItemHTML(s, ym)).join('');
+}
+
+function salRenderSummary() {
+  const ym = _salMonth, staff = salStaff(ym);
+  let total = 0, paid = 0, advBal = 0;
+  staff.forEach(s => { const r = salCalc(s, ym); total += r.net; advBal += r.advBal; if (r.paid) paid += r.net; });
+  document.getElementById('sal-summary').innerHTML =
+    `<div class="sal-tile T"><b>${salInr(total)}</b><span>Total payable</span></div>` +
+    `<div class="sal-tile P"><b>${salInr(paid)}</b><span>Paid</span></div>` +
+    `<div class="sal-tile D"><b>${salInr(total - paid)}</b><span>Pending</span></div>` +
+    `<div class="sal-tile V"><b>${salInr(advBal)}</b><span>Advance balance</span></div>`;
+}
+
+function salAdvColHTML(r) {
+  if (!r.advBal && !r.advRec) return '<b class="nil">—</b>';
+  return `<b>${r.advBal ? salInr(r.advBal) : 'Cleared'}</b>` + (r.advRec ? `<small>− ${salInr(r.advRec)} this month</small>` : '');
+}
+
+function salItemHTML(s, ym) {
+  const r = salCalc(s, ym), st = salStatus(r), open = _salOpen === s.id;
+  const pill = salPillText(r, st);
+  const id = s.id, nm = attEsc(s.name), rec = salRec(ym, id);
+  const val = v => (v ? String(v) : '');
+  return `<div class="sal-item ${st}${open ? ' open' : ''}" id="sal-item-${id}">
+    <button class="sal-head" onclick="salToggle('${id}')" aria-expanded="${open}">
+      <div class="sal-who">
+        <div class="att-av">${attEsc((s.name || '?').trim().charAt(0).toUpperCase())}</div>
+        <div class="att-nm"><div class="att-name">${nm}${s.removed ? ' <i style="font-weight:600;color:var(--mid)">(removed)</i>' : ''}</div>${s.role ? `<div class="att-role">${attEsc(s.role)}</div>` : ''}</div>
+      </div>
+      <div class="sal-advc" id="sal-advc-${id}">${salAdvColHTML(r)}</div>
+      <div class="sal-pend" id="sal-pend-${id}">${salPendColHTML(r, id, ym)}</div>
+      <div class="sal-amt"><b id="sal-net-${id}">${salHeadAmt(r)}</b><span class="sal-pill ${st}" id="sal-pill-${id}">${pill}</span></div>
+      <span class="sal-chev">›</span>
+    </button>
+    <div class="sal-body">
+      <div id="sal-owe-${id}">${salOweHTML(s, r, ym)}</div>
+      <div class="sal-att">
+        <span class="P">${attNum(r.c.P)} present</span><span class="H">${attNum(r.c.H)} half</span>
+        <span class="A">${attNum(r.c.A)} absent</span><span class="L">${attNum(r.c.L)} leave</span>
+      </div>
+      <div class="sal-fields">
+        <div class="sal-f full"><label for="sal-base-${id}">MONTHLY SALARY (₹) — change applies from ${salMonthName(ym)} onwards</label>
+          <input id="sal-base-${id}" type="number" min="0" inputmode="decimal" placeholder="e.g. 15000" value="${val(salBaseFor(id, ym))}" oninput="salEdit('${id}','base',this.value)"><div id="sal-hist-${id}">${salHistHTML(id, ym)}</div></div>
+        <div class="sal-f"><label for="sal-bonus-${id}">BONUS / OVERTIME (₹)</label>
+          <input id="sal-bonus-${id}" type="number" min="0" inputmode="decimal" placeholder="0" value="${val(rec.bonus)}" oninput="salEdit('${id}','bonus',this.value)"></div>
+        <div class="sal-f"><label for="sal-adv-${id}">OTHER DEDUCTION (₹)</label>
+          <input id="sal-adv-${id}" type="number" min="0" inputmode="decimal" placeholder="0" value="${val(rec.adv)}" oninput="salEdit('${id}','adv',this.value)"></div>
+        <div class="sal-f"><label for="sal-given-${id}">AMOUNT GIVEN (₹) — empty if only salary</label>
+          <input id="sal-given-${id}" type="number" min="0" inputmode="decimal" placeholder="e.g. 50000" value="${val(rec.given)}" oninput="salEdit('${id}','given',this.value)"></div>
+        <div class="sal-f"><label for="sal-givenon-${id}">DATE GIVEN</label>
+          <input id="sal-givenon-${id}" type="date" value="${attEsc(rec.givenOn || '')}" onchange="salEdit('${id}','givenOn',this.value)"></div>
+        <div class="sal-f full"><label for="sal-note-${id}">NOTE (optional)</label>
+          <input id="sal-note-${id}" type="text" maxlength="80" placeholder="e.g. Diwali bonus" value="${attEsc(rec.note || '')}" oninput="salEdit('${id}','note',this.value)"></div>
+      </div>
+      <div class="sal-advblk">
+        <div class="sal-advblk-t">💸 ADVANCE</div>
+        <div class="sal-fields">
+          <div class="sal-f"><label for="sal-advgive-${id}">ADVANCE AMOUNT (₹) — given this month</label>
+            <input id="sal-advgive-${id}" type="number" min="0" inputmode="decimal" placeholder="e.g. 5000" value="${val(rec.advGive)}" oninput="salEdit('${id}','advGive',this.value)"></div>
+          <div class="sal-f"><label for="sal-advon-${id}">ADVANCE DATE</label>
+            <input id="sal-advon-${id}" type="date" value="${attEsc(rec.advOn || '')}" onchange="salEdit('${id}','advOn',this.value)"></div>
+        </div>
+        <div class="sal-advstats" id="sal-advstats-${id}">${salAdvStatsHTML(r)}</div>
+      </div>
+      <div class="sal-calc" id="sal-calc-${id}">${salCalcHTML(r)}</div>
+      <div class="sal-acts" id="sal-acts-${id}">${salActsHTML(id, r)}</div>
+      <div id="sal-ledger-${id}">${salLedgerHTML(id, r)}</div>
+    </div>
+  </div>`;
+}
+
+function salAdvStatsHTML(r) {
+  const newAdv = (r.advNew || 0) + (r.advGive || 0);
+  return `<div><b>${salInr(r.advOpen)}</b><span>Before this month</span></div>
+    <div class="rec"><b>− ${salInr(r.advRec)}</b><span>Cancelled by salary</span></div>
+    <div class="new"><b>+ ${salInr(newAdv)}</b><span>New advance</span></div>
+    <div class="bal"><b>${salInr(r.advBal)}</b><span>Balance</span></div>`;
+}
+function salLedgerHTML(id, r) {
+  const L = [];
+  if (r.advOpen) L.push(`<div>Advance before this month: <b>${salInr(r.advOpen)}</b></div>`);
+  if (r.advRec) L.push(`<div>Cancelled from this month's salary: <b>− ${salInr(r.advRec)}</b></div>`);
+  if (r.given) L.push(`<div>Amount given${r.givenOn ? ' on <b>' + attLongDate(r.givenOn) + '</b>' : ''}: <b>${salInr(r.given)}</b></div>`);
+  if (r.advGive) L.push(`<div>Advance given${r.advOn ? ' on <b>' + attLongDate(r.advOn) + '</b>' : ''}: <b>+ ${salInr(r.advGive)}</b></div>`);
+  if (r.advNew) L.push(`<div>New advance (given ${salInr(r.given)} − payable ${salInr(r.net)}): <b>+ ${salInr(r.advNew)}</b></div>`);
+  L.push(`<div>Advance balance after this month: <b>${r.advBal ? salInr(r.advBal) : '₹0 — cleared ✓'}</b></div>`);
+  return `<div class="att-hint" style="margin:10px 0 4px;line-height:1.7">${L.join('')}</div>`;
+}
+
+function salCalcHTML(r) {
+  const rows = [`<div class="sal-line"><span>Monthly salary</span><b>${salInr(r.base)}</b></div>`];
+  if (r.nosal) rows.push(`<div class="sal-line minus"><span>Absent whole month – no salary</span><b>− ${salInr(r.base)}</b></div>`);
+  if (r.bonus) rows.push(`<div class="sal-line plus"><span>Bonus / overtime</span><b>+ ${salInr(r.bonus)}</b></div>`);
+  if (r.other) rows.push(`<div class="sal-line minus"><span>Other deduction</span><b>− ${salInr(r.other)}</b></div>`);
+  if (r.advRec) {
+    rows.push(`<div class="sal-line"><span><b style="color:var(--ink)">Salary</b></span><b>${salInr(r.due)}</b></div>`);
+    rows.push(`<div class="sal-line minus"><span>Advance cut</span><b>− ${salInr(r.advRec)}</b></div>`);
+  }
+  rows.push(`<div class="sal-line net"><span>${r.advRec ? 'Cash payable' : 'Payable'}</span><b>${salInr(r.net)}</b></div>`);
+  if (r.advBal) rows.push(`<div class="sal-line info"><span>Advance balance after this month</span><b>${salInr(r.advBal)}</b></div>`);
+  return rows.join('');
+}
+function salActsHTML(id, r) {
+  const nsBtn = r.nosal
+    ? `<button class="sal-btn" style="width:100%;border-color:#dc2626;color:#dc2626" onclick="salToggleNoSal('${id}')">↩ Cancel – give salary this month</button>`
+    : `<button class="sal-btn" style="width:100%" onclick="salToggleNoSal('${id}')">🚫 Absent full month – no salary, advance not reduced</button>`;
+  const cutBtn = (r.advOpen > 0 || r.cut)
+    ? (r.cut
+      ? `<button class="sal-btn" style="width:100%;border-color:#2563eb;color:#2563eb" onclick="salToggleCut('${id}')">↩ Give salary in cash – don't cut advance</button>`
+      : `<button class="sal-btn" style="width:100%" onclick="salToggleCut('${id}')">✂ Not giving salary – cut it from advance (${salInr(Math.min(r.advOpen, r.due))})</button>`)
+    : '';
+  const paidTxt = r.paid ? `Paid on ${attLongDate(r.paidOn || attTodayStr())}` : '';
+  return (r.paid
+      ? `<button class="sal-btn unpay" onclick="salSetPaid('${id}',false)">↩ Mark as unpaid</button>`
+      : `<button class="sal-btn pay" onclick="salSetPaid('${id}',true)"${r.base && !r.nosal ? '' : ' disabled style="opacity:.5"'}>✓ Mark as paid</button>`) +
+    `<button class="sal-btn" onclick="salPayslip('${id}')"${r.base ? '' : ' disabled style="opacity:.5"'}>🧾 Payslip</button>` +
+    (paidTxt ? `<div class="att-hint" style="width:100%;margin:0">${paidTxt}</div>` : '') + cutBtn + nsBtn;
+}
+
+function salToggle(id) {
+  _salOpen = _salOpen === id ? null : id;
+  document.querySelectorAll('#sal-list .sal-item').forEach(el => {
+    const on = el.id === 'sal-item-' + _salOpen;
+    el.classList.toggle('open', on);
+    const h = el.querySelector('.sal-head'); if (h) h.setAttribute('aria-expanded', on ? 'true' : 'false');
+  });
+  if (_salOpen) { const el = document.getElementById('sal-item-' + id); if (el) setTimeout(() => el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }), 30); }
+}
+
+// Update numbers in place (keeps keyboard focus in the field)
+function salRefreshItem(id) {
+  const s = ATT_STAFF.find(x => x.id === id); if (!s) return;
+  const r = salCalc(s, _salMonth), st = salStatus(r);
+  const item = document.getElementById('sal-item-' + id); if (!item) return;
+  item.classList.remove('paid', 'pend', 'noset'); item.classList.add(st);
+  const net = document.getElementById('sal-net-' + id); if (net) net.innerHTML = salHeadAmt(r);
+  const pill = document.getElementById('sal-pill-' + id);
+  if (pill) { pill.className = 'sal-pill ' + st; pill.textContent = salPillText(r, st); }
+  const pc = document.getElementById('sal-pend-' + id); if (pc) pc.innerHTML = salPendColHTML(r, id, _salMonth);
+  const ac = document.getElementById('sal-advc-' + id); if (ac) ac.innerHTML = salAdvColHTML(r);
+  const ow = document.getElementById('sal-owe-' + id); if (ow) ow.innerHTML = salOweHTML(s, r, _salMonth);
+  const as = document.getElementById('sal-advstats-' + id); if (as) as.innerHTML = salAdvStatsHTML(r);
+  const calc = document.getElementById('sal-calc-' + id); if (calc) calc.innerHTML = salCalcHTML(r);
+  const acts = document.getElementById('sal-acts-' + id); if (acts) acts.innerHTML = salActsHTML(id, r);
+  const lg = document.getElementById('sal-ledger-' + id); if (lg) lg.innerHTML = salLedgerHTML(id, r);
+  salRenderSummary();
+}
+
+function salEdit(id, field, v) {
+  if (!attIsAdmin()) { toast('⚠ Admin access only'); return; }
+  const ym = _salMonth;
+  if (field === 'base') {
+    const n = salMoney(v);
+    const hist = SAL_CFG.hist[id] = salHist(id);
+    const at = hist.findIndex(h => h.from === ym);
+    if (!n) {                                   // cleared
+      if (at >= 0) hist.splice(at, 1);
+      else if (!hist.length) delete SAL_CFG.base[id];
+    } else if (!SAL_CFG.base[id] && !hist.length) {
+      SAL_CFG.base[id] = n;                     // first salary ever set
+    } else if (at >= 0) {
+      hist[at].amount = n;
+    } else {
+      hist.push({ from: ym, amount: n });       // change applies from this month onwards
+    }
+    if (!hist.length) delete SAL_CFG.hist[id];
+    const hl = document.getElementById('sal-hist-' + id); if (hl) hl.innerHTML = salHistHTML(id, ym);
+    salPersistCfg();
+    clearTimeout(_salSaveT.cfg); _salSaveT.cfg = setTimeout(salSaveCfg, 700);
+  } else {
+    const m = SAL_REC[ym] || (SAL_REC[ym] = {});
+    const r = m[id] || (m[id] = {});
+    if (field === 'note' || field === 'givenOn' || field === 'advOn') { const t = String(v).trim(); if (t) r[field] = t; else delete r[field]; }
+    else { const n = salMoney(v); if (n) r[field] = n; else delete r[field]; }
+    if (field === 'given') {                       // auto-date the amount; clear date if amount removed
+      const di = document.getElementById('sal-givenon-' + id);
+      if (r.given && !r.givenOn) { r.givenOn = attTodayStr(); if (di) di.value = r.givenOn; }
+      if (!r.given && r.givenOn) { delete r.givenOn; if (di) di.value = ''; }
+    }
+    if (field === 'advGive') {
+      const di = document.getElementById('sal-advon-' + id);
+      if (r.advGive && !r.advOn) { r.advOn = attTodayStr(); if (di) di.value = r.advOn; }
+      if (!r.advGive && r.advOn) { delete r.advOn; if (di) di.value = ''; }
+    }
+    if (!Object.keys(r).length) delete m[id];
+    salPersistRec();
+    clearTimeout(_salSaveT[ym]); _salSaveT[ym] = setTimeout(() => salSaveMonth(ym), 700);
+  }
+  salRefreshItem(id);
+}
+
+function salAddAdvance(id) {
+  if (!attIsAdmin()) { toast('⚠ Admin access only'); return; }
+  const s = ATT_STAFF.find(x => x.id === id); if (!s) return;
+  const amt = salMoney(document.getElementById('sal-an-amt-' + id).value);
+  let emi = salMoney(document.getElementById('sal-an-emi-' + id).value);
+  const from = document.getElementById('sal-an-from-' + id).value || _salMonth;
+  const note = document.getElementById('sal-an-note-' + id).value.replace(/\s+/g, ' ').trim();
+  if (!amt) { toast('⚠ Enter the advance amount'); document.getElementById('sal-an-amt-' + id).focus(); return; }
+  if (!/^\d{4}-\d{2}$/.test(from)) { toast('⚠ Pick the starting month'); return; }
+  if (!emi || emi > amt) emi = amt;
+  (SAL_CFG.adv[id] || (SAL_CFG.adv[id] = [])).push({ id: 'a' + Date.now().toString(36) + Math.random().toString(36).slice(2, 4), from, amount: amt, emi, date: attTodayStr(), note });
+  salSaveCfg();
+  renderSalary();
+  salRefreshAdminCard();
+  toast('✓ Advance ' + salInr(amt) + ' given to ' + s.name);
+}
+function salDelAdvance(id, aid) {
+  if (!attIsAdmin()) { toast('⚠ Admin access only'); return; }
+  const list = salAdvList(id), a = list.find(x => x.id === aid); if (!a) return;
+  if (!confirm('Delete this advance of ' + salInr(a.amount) + '?\n\nIt will disappear from every month, including recoveries already counted in past salaries.')) return;
+  SAL_CFG.adv[id] = list.filter(x => x.id !== aid);
+  salSaveCfg();
+  renderSalary();
+  salRefreshAdminCard();
+  toast('🗑 Advance deleted');
+}
+
+function salToggleCut(id) {
+  if (!attIsAdmin()) { toast('⚠ Admin access only'); return; }
+  const s = ATT_STAFF.find(x => x.id === id); if (!s) return;
+  const ym = _salMonth;
+  const m = SAL_REC[ym] || (SAL_REC[ym] = {});
+  const r = m[id] || (m[id] = {});
+  if (r.cut) { delete r.cut; if (!Object.keys(r).length) delete m[id]; }
+  else { r.cut = true; delete r.nosal; }
+  clearTimeout(_salSaveT[ym]);
+  salSaveMonth(ym);
+  renderSalary();                       // advance chain of later months changes too
+  salRefreshAdminCard();
+  toast(r.cut ? '✂ ' + s.name + ': salary cut from advance' : '✓ ' + s.name + ': full salary, advance not cut');
+}
+function salToggleNoSal(id) {
+  if (!attIsAdmin()) { toast('⚠ Admin access only'); return; }
+  const s = ATT_STAFF.find(x => x.id === id); if (!s) return;
+  const ym = _salMonth;
+  const m = SAL_REC[ym] || (SAL_REC[ym] = {});
+  const r = m[id] || (m[id] = {});
+  if (r.nosal) { delete r.nosal; if (!Object.keys(r).length) delete m[id]; }
+  else { r.nosal = true; delete r.cut; delete r.paid; delete r.paidOn; }
+  clearTimeout(_salSaveT[ym]);
+  salSaveMonth(ym);
+  renderSalary();                       // advance chain of later months changes too
+  salRefreshAdminCard();
+  toast(r.nosal ? '🚫 No salary for ' + s.name + ' this month' : '✓ Salary restored for ' + s.name);
+}
+function salSetPaid(id, paid) {
+  if (!attIsAdmin()) { toast('⚠ Admin access only'); return; }
+  const s = ATT_STAFF.find(x => x.id === id); if (!s) return;
+  const ym = _salMonth;
+  if (paid && !salCalc(s, ym).base) { toast('⚠ Enter the monthly salary first'); return; }
+  const m = SAL_REC[ym] || (SAL_REC[ym] = {});
+  const r = m[id] || (m[id] = {});
+  if (paid) { r.paid = true; r.paidOn = attTodayStr(); } else { delete r.paid; delete r.paidOn; if (!Object.keys(r).length) delete m[id]; }
+  clearTimeout(_salSaveT[ym]);
+  salSaveMonth(ym);
+  salRefreshItem(id);
+  salRefreshAdminCard();
+  toast(paid ? '✓ Marked paid: ' + s.name : '↩ Marked unpaid: ' + s.name);
+}
+
+function salSyncSettingsUI() {
+  const d = document.getElementById('sal-set-div'), h = document.getElementById('sal-set-hdf'), l = document.getElementById('sal-set-leave');
+  if (d) d.value = SAL_CFG.divisor; if (h) h.value = SAL_CFG.halfCut; if (l) l.checked = !!SAL_CFG.leavePaid;
+}
+function salSaveSettings() {
+  if (!attIsAdmin()) { toast('⚠ Admin access only'); return; }
+  const d = parseInt(document.getElementById('sal-set-div').value, 10);
+  const h = parseFloat(document.getElementById('sal-set-hdf').value);
+  SAL_CFG.divisor = d >= 1 && d <= 31 ? d : 30;
+  SAL_CFG.halfCut = isFinite(h) && h >= 0 && h <= 1 ? h : 0.5;
+  SAL_CFG.leavePaid = !!document.getElementById('sal-set-leave').checked;
+  salSyncSettingsUI();
+  salSaveCfg();
+  renderSalary();
+  toast('✓ Salary settings saved');
+}
+
+// ── export / payslip ────────────────────────────────────────────────────────
+function salExportCSV() {
+  const ym = _salMonth, staff = salStaff(ym);
+  if (!staff.length) { toast('⚠ No staff to export'); return; }
+  const head = ['Name', 'Role', 'Salary month', 'Monthly salary', 'Present', 'Half day', 'Absent', 'Leave', 'Bonus/Overtime', 'Advance recovery', 'Other deduction', 'Amount given', 'Date given', 'Advance given', 'Advance date', 'Payable', 'Advance balance', 'Status', 'Paid on', 'Note'];
+  const rows = [head].concat(staff.map(s => {
+    const r = salCalc(s, ym);
+    return [s.name, s.role || '', ym, Math.round(r.base), r.c.P, r.c.H, r.c.A, r.c.L, Math.round(r.bonus), Math.round(r.advRec), Math.round(r.other), Math.round(r.given), r.givenOn, Math.round(r.advGive), r.advOn, Math.round(r.net), Math.round(r.advBal), r.nosal ? 'No salary' : (r.paid ? 'Paid' : 'Pending'), r.paidOn, r.note];
+  }));
+  const q = v => '"' + String(v).replace(/"/g, '""') + '"';
+  const blob = new Blob(['\ufeff' + rows.map(r => r.map(q).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'Salary_' + ym + '.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+  toast('✓ Salary CSV downloaded');
+}
+
+function salPayslip(id) {
+  const s = ATT_STAFF.find(x => x.id === id); if (!s) return;
+  const ym = _salMonth, r = salCalc(s, ym);
+  const month = salMonthName(ym, true);
+  const w = window.open('', '_blank'); if (!w) { toast('⚠ Allow pop-ups to print'); return; }
+  const row = (a, b, cls) => `<tr class="${cls || ''}"><td>${a}</td><td class="r">${b}</td></tr>`;
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Payslip ${attEsc(s.name)} ${month}</title>
+<style>@page{margin:14mm}body{font-family:Arial,Helvetica,sans-serif;color:#111;max-width:640px;margin:0 auto;padding:18px}
+h1{margin:0;font-size:20px}.sub{color:#666;font-size:12px;margin:2px 0 14px}.bar{height:4px;background:#F26522;margin:10px 0 16px}
+.meta{display:flex;justify-content:space-between;font-size:13px;margin-bottom:14px}.meta b{display:block;font-size:15px}
+table{width:100%;border-collapse:collapse;font-size:13px}td{padding:8px 6px;border-bottom:1px solid #e5e5e5}.r{text-align:right}
+.h td{background:#f6f6f3;font-weight:700;font-size:11px;letter-spacing:.5px;color:#555}.net td{font-size:16px;font-weight:800;border-top:2px solid #111;border-bottom:none}
+.sig{display:flex;justify-content:space-between;margin-top:50px;font-size:12px;color:#555}.sig div{border-top:1px solid #999;padding-top:6px;width:40%;text-align:center}</style></head><body>
+<h1>Payslip</h1><div class="sub">Salary for ${month} · paid in ${salMonthName(salAddMonths(ym, 1), true)}</div><div class="bar"></div>
+<div class="meta"><div><span style="color:#666;font-size:11px">EMPLOYEE</span><b>${attEsc(s.name)}</b>${attEsc(s.role || '')}</div>
+<div style="text-align:right"><span style="color:#666;font-size:11px">STATUS</span><b>${r.paid ? 'Paid' : 'Pending'}</b>${r.paid ? attLongDate(r.paidOn) : ''}</div></div>
+<table><tr class="h"><td>ATTENDANCE</td><td class="r">DAYS</td></tr>
+${row('Present', attNum(r.c.P))}${row('Half day', attNum(r.c.H))}${row('Absent', attNum(r.c.A))}${row('Leave', attNum(r.c.L))}</table><br>
+<table><tr class="h"><td>EARNINGS &amp; DEDUCTIONS</td><td class="r">AMOUNT (₹)</td></tr>
+${row('Monthly salary', salInr(r.base))}${r.nosal ? row('Absent whole month – no salary', '− ' + salInr(r.base)) : ''}
+${r.bonus ? row('Bonus / overtime', '+ ' + salInr(r.bonus)) : ''}${r.advRec ? row('Advance recovery', '− ' + salInr(r.advRec)) : ''}${r.other ? row('Other deduction', '− ' + salInr(r.other)) : ''}
+${row('Net payable', salInr(r.net), 'net')}</table>
+${r.advBal ? `<p style="font-size:12px;color:#555;margin-top:12px">Advance balance still to recover: ${salInr(r.advBal)}</p>` : ''}
+${r.note ? `<p style="font-size:12px;color:#555;margin-top:6px">Note: ${attEsc(r.note)}</p>` : ''}
+<div class="sig"><div>Employer signature</div><div>Employee signature</div></div></body></html>`);
+  w.document.close();
+  w.onload = () => setTimeout(() => { w.focus(); w.print(); }, 300);
+}
+
+// ── Admin panel card ("Management → Salary") ────────────────────────────────
+function salRefreshAdminCard() {
+  const el = document.getElementById('adm-sal-sub'); if (!el) return;
+  const ym = salCurrentPayroll(), staff = attActiveStaff();
+  if (!staff.length) { el.textContent = 'Monthly salary, advance and payable for all staff'; return; }
+  let total = 0, paid = 0, set = 0, adv = 0;
+  staff.forEach(s => { const r = salCalc(s, ym); adv += r.advBal; if (r.base) { set++; total += r.net; if (r.paid) paid += r.net; } });
+  if (!set) { el.textContent = 'Set salary for your ' + staff.length + ' staff'; return; }
+  const mon = new Date(+ym.slice(0, 4), +ym.slice(5, 7) - 1, 1).toLocaleDateString('en-IN', { month: 'short' });
+  el.textContent = mon + ' salary: ' + salInr(total) + ' payable' + (paid ? ', ' + salInr(paid) + ' paid' : '') + (adv ? ' · advance due ' + salInr(adv) : '');
+}
+async function salRefreshAdminCardCloud() {
+  salRefreshAdminCard();
+  const ym = salCurrentPayroll();
+  const a = await attLoadStaff(), b = await salLoadCfg(), c = await attLoadMonth(ym), d = await salLoadMonth(ym);
+  if (a || b || c || d) salRefreshAdminCard();
+}
+
 // ════════════════════════════════════
 //  VIEW SWITCHER
 // ════════════════════════════════════
 function switchView(name, btn) {
-  if ((name === 'attendance' || name === 'idcards') && !(_sessionUser && _sessionUser.isAdmin)) { toast('⚠ Admin access only'); return; }
+  if ((name === 'attendance' || name === 'idcards' || name === 'salary') && !(_sessionUser && _sessionUser.isAdmin)) { toast('⚠ Admin access only'); return; }
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.bn-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('view-' + name).classList.add('active');
@@ -5973,6 +6742,7 @@ function switchView(name, btn) {
   if (name === 'records') renderRecords();
   if (name === 'admin') renderAdminPanel();
   if (name === 'attendance') attOnOpen();
+  if (name === 'salary') salOnOpen();
   if (name === 'idcards') kwIdOnOpen();
   if (name === 'trash') { if (_sessionUser && _sessionUser.isAdmin) renderTrash(); else { toast('⚠ Admin access only'); return; } }
   if (name === 'release') { renderRelease(); checkAndAutoDeleteReleased(); }
