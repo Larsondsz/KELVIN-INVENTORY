@@ -9357,6 +9357,20 @@ function buildPrintHTML(r) {
     dmg_right:'Right Side Damage', dmg_windshield:'Windshield Broken',
     dmg_top:'Top Damage', dmg_underbody:'Under Body Damage'
   };
+  // 2W-only damage items — must be listed here or they never print
+  const dmgLabels2W = {
+    dmg_headlight:'Headlight Broken', dmg_taillight:'Tail Light Broken', dmg_indicator2w:'Indicator Broken',
+    dmg_mirror2w:'Mirror Broken', dmg_handle:'Handle Bent', dmg_fueltank:'Fuel Tank Dent',
+    dmg_seat2w:'Seat Torn', dmg_mudguard:'Mudguard Broken', dmg_silencer:'Silencer Damaged',
+    dmg_clutchlever:'Clutch Lever Broken', dmg_brakelever:'Brake Lever Broken', dmg_speedometer:'Speedometer Broken',
+    dmg_frontnumplate:'Front Number Plate Missing', dmg_rearnumplate:'Rear Number Plate Missing',
+    dmg_sidestand:'Side Stand Broken', dmg_centerstand:'Center Stand Broken',
+    dmg_battery2w:'Battery Missing/Damaged', dmg_selfstart:'Self Start Issue', dmg_horn2w:'Horn Not Working'
+  };
+  const _dmgSel = r.damageAreas ? r.damageAreas.split(',').map(s=>s.trim()) : [];
+  Object.entries(dmgLabels2W).forEach(([k,v]) => {
+    if (r.vehType === '2W' || _dmgSel.includes(v)) dmgLabels[k] = v;
+  });
   const dmgActive = {};
   if (r.damageAreas) {
     r.damageAreas.split(',').map(s=>s.trim()).forEach(label => {
@@ -9522,9 +9536,11 @@ function buildPrintHTML(r) {
         <div style="padding:5px 10px;border-right:1px solid #ECECEC;border-bottom:1px solid #ECECEC;display:flex;align-items:center;gap:7px;">
           ${on ? cbFilled : cbEmpty}<span style="font-size:10.5px;font-weight:${on?'700':'500'};color:${on?'#DC2626':'#555'}">${label}</span>
         </div>`;
-  const dmgCells = Object.entries(dmgLabels).filter(([key]) => !hideK('dmg', key))
-      .map(([key,label]) => dmgCell(cfg.rename[key] ? escH(cfg.rename[key]) : label, !!dmgActive[key])).join('')
-    + cfg.customDmg.map(d => dmgCell(escH(d.label), cu[d.id] === 'Yes')).join('');
+  // Print only the damage areas that were actually ticked
+  let dmgCells = Object.entries(dmgLabels).filter(([key]) => !hideK('dmg', key) && dmgActive[key])
+      .map(([key,label]) => dmgCell(cfg.rename[key] ? escH(cfg.rename[key]) : label, true)).join('')
+    + cfg.customDmg.filter(d => cu[d.id] === 'Yes').map(d => dmgCell(escH(d.label), true)).join('');
+  if (!dmgCells) dmgCells = '<div style="grid-column:1 / -1;padding:6px 10px;font-size:10.5px;color:#777;">No damage areas marked</div>';
   const dmgGrid = hideK('sections','damage') ? '' : `
     <div style="font-size:9.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:5px;">Damage Areas:</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border:1px solid #E2E3E6;border-radius:6px;overflow:hidden;margin-bottom:8px;background:#fff;">${dmgCells}</div>`;
