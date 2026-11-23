@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Kelvin Warehousing – Inventory</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -2352,8 +2352,94 @@ select.qbill-input{
 .kotak-repo-note{font-size:10.5px;font-weight:700;color:var(--fire2);margin-bottom:6px;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<style id="kw-chooser-css">
+#device-chooser{position:fixed;inset:0;z-index:2147483000;background:#0d0d0d;
+  background-image:linear-gradient(rgba(74,222,128,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(74,222,128,.03) 1px,transparent 1px);
+  background-size:40px 40px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;font-family:'DM Sans',sans-serif;color:#fff;overflow:auto;-webkit-overflow-scrolling:touch}
+#device-chooser.hide{display:none}
+#device-chooser .dc-brand{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+#device-chooser .dc-logo{width:52px;height:52px;border-radius:13px;background:linear-gradient(135deg,#4ade80,#22c55e);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 0 26px rgba(74,222,128,.35)}
+#device-chooser .dc-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#4ade80;line-height:1.05}
+#device-chooser .dc-tag{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#555;margin-top:5px}
+#device-chooser .dc-card{width:100%;max-width:420px;background:#161616;border:1px solid #252525;border-radius:20px;padding:26px 22px 20px;box-shadow:0 28px 80px rgba(0,0,0,.9)}
+#device-chooser .dc-title{font-family:'Syne',sans-serif;font-size:19px;font-weight:800}
+#device-chooser .dc-sub{font-size:12px;color:#777;margin:4px 0 22px}
+#device-chooser .dc-opts{display:flex;gap:12px}
+#device-chooser .dc-opt{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 8px 18px;border-radius:14px;border:1.5px solid #2a2a2a;background:#111;color:#fff;cursor:pointer;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;-webkit-appearance:none;appearance:none;touch-action:manipulation;transition:border-color .15s,background .15s,transform .1s}
+#device-chooser .dc-opt:hover,#device-chooser .dc-opt:focus-visible{border-color:#4ade80;background:#14201a;outline:none}
+#device-chooser .dc-opt:active{transform:scale(.97)}
+#device-chooser .dc-opt .ic{font-size:36px;line-height:1}
+#device-chooser .dc-opt small{font-family:'DM Sans',sans-serif;font-weight:500;font-size:11px;color:#777}
+#device-chooser .dc-rec{display:none;position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:#4ade80;color:#0a0a0a;font-family:'DM Sans',sans-serif;font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:2px 9px;border-radius:8px;white-space:nowrap}
+#device-chooser .dc-opt.rec{border-color:#2f6b47}
+#device-chooser .dc-opt.rec .dc-rec{display:block}
+#device-chooser .dc-remember{display:flex;align-items:center;gap:9px;margin-top:20px;font-size:12px;color:#888;cursor:pointer;user-select:none}
+#device-chooser .dc-remember input{width:17px;height:17px;accent-color:#4ade80}
+.dc-switch{margin-top:14px;font-size:11px;color:#666;text-align:center;cursor:pointer;text-decoration:underline;text-underline-offset:3px;letter-spacing:.3px}
+</style>
 </head>
 <body>
+<div id="device-chooser" role="dialog" aria-modal="true" aria-label="Choose device view">
+  <div class="dc-brand">
+    <div class="dc-logo">🚚</div>
+    <div><div class="dc-name">Kelvin Warehousing</div><div class="dc-tag">Inventory System</div></div>
+  </div>
+  <div class="dc-card">
+    <div class="dc-title">How are you using the app?</div>
+    <div class="dc-sub">Pick your device so the screen fits properly.</div>
+    <div class="dc-opts">
+      <button type="button" class="dc-opt" id="dc-mobile" onclick="kwChooseMode('mobile')">
+        <span class="dc-rec">Suggested</span><span class="ic">📱</span>Mobile<small>Phone / small screen</small>
+      </button>
+      <button type="button" class="dc-opt" id="dc-desktop" onclick="kwChooseMode('desktop')">
+        <span class="dc-rec">Suggested</span><span class="ic">💻</span>Desktop<small>Laptop / PC / tablet</small>
+      </button>
+    </div>
+    <label class="dc-remember"><input type="checkbox" id="dc-remember"> Remember my choice on this device</label>
+  </div>
+</div>
+<script>
+(function(){
+  var H=document.documentElement, KEY='kw_device_mode';
+  var native=!!(window.Capacitor&&typeof window.Capacitor.isNativePlatform==='function'&&window.Capacitor.isNativePlatform());
+  function vp(c){var m=document.querySelector('meta[name="viewport"]');if(m)m.setAttribute('content',c);}
+  function wide(){H.classList.toggle('wide-screen',window.innerWidth>700);}
+  function apply(mode){
+    H.classList.remove('mode-mobile','mode-desktop');H.classList.add('mode-'+mode);
+    vp(mode==='mobile'?'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover':'width=1100, initial-scale=1.0, user-scalable=yes');
+    wide();
+    var c=document.getElementById('device-chooser');if(c)c.classList.add('hide');
+    window.scrollTo(0,0);
+  }
+  window.kwChooseMode=function(mode){
+    var r=document.getElementById('dc-remember');
+    try{if(r&&r.checked)localStorage.setItem(KEY,mode);else localStorage.removeItem(KEY);}catch(e){}
+    apply(mode);
+  };
+  window.kwSwitchMode=function(){
+    try{localStorage.removeItem(KEY);}catch(e){}
+    H.classList.remove('mode-mobile','mode-desktop','wide-screen');
+    vp('width=device-width, initial-scale=1.0');
+    var c=document.getElementById('device-chooser');if(c)c.classList.remove('hide');
+  };
+  window.addEventListener('resize',wide);
+  var saved=null;try{saved=localStorage.getItem(KEY);}catch(e){}
+  if(native){apply('mobile');}
+  else if(saved==='mobile'||saved==='desktop'){apply(saved);}
+  else{
+    var small=Math.min(screen.width||9999,window.innerWidth)<700||/Android|iPhone|iPod/i.test(navigator.userAgent);
+    var rec=document.getElementById(small?'dc-mobile':'dc-desktop');if(rec)rec.classList.add('rec');
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    if(native)return;
+    var f=document.querySelector('#login-screen .login-footer');
+    if(f){var a=document.createElement('div');a.className='dc-switch';a.textContent='Change device view (Mobile / Desktop)';a.onclick=window.kwSwitchMode;f.parentNode.insertBefore(a,f);}
+  });
+})();
+</script>
+
 
 <!-- ════════ LOGIN SCREEN — KD ENTERPRISES STYLE ════════ -->
 <div id="login-screen">
@@ -13872,5 +13958,52 @@ ${photo}
   <div id="ly-preview-root"></div>
 </div>
 
+<style id="kw-mode-css">
+/* ===== MOBILE MODE (only when user picked Mobile) ===== */
+html.mode-mobile{-webkit-text-size-adjust:100%;background:#0d0d0d;}
+html.mode-mobile body{overscroll-behavior-y:none;-webkit-touch-callout:none;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);overflow-x:hidden;}
+html.mode-mobile input,html.mode-mobile select,html.mode-mobile textarea{font-size:max(16px,1em);}
+html.mode-mobile button,html.mode-mobile .btn,html.mode-mobile [onclick]{touch-action:manipulation;}
+html.mode-mobile input,html.mode-mobile textarea,html.mode-mobile [contenteditable]{-webkit-user-select:text;user-select:text;}
+html.mode-mobile .topbar{padding:0 12px;gap:8px;}
+html.mode-mobile .brand{gap:8px;min-width:0;flex:1 1 auto;}
+html.mode-mobile .brand>div:last-child{min-width:0;}
+html.mode-mobile .kw-logo{width:34px;height:34px;}
+html.mode-mobile .bname{font-size:12px;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+html.mode-mobile .btag{font-size:8px;letter-spacing:1.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+html.mode-mobile .user-pill{padding:3px;flex-shrink:0;}
+html.mode-mobile .user-pill .u-name,html.mode-mobile .user-pill .admin-badge{display:none !important;}
+html.mode-mobile #sync-label{display:none;}
+html.mode-mobile .sync-pill{padding:6px 8px !important;gap:0 !important;}
+html.mode-mobile .topbar>div:last-child{gap:8px !important;flex-shrink:0;min-width:0;}
+html.mode-mobile .kpi-strip{grid-template-columns:repeat(12,1fr);gap:8px;padding:12px 12px 0;}
+html.mode-mobile .kpi-strip>.kpi:nth-child(-n+3){grid-column:span 4;}
+html.mode-mobile .kpi-strip>.kpi:nth-child(n+4){grid-column:span 3;}
+html.mode-mobile .kpi{padding:8px 4px;}
+html.mode-mobile .kpi-n{font-size:20px;}
+html.mode-mobile .kpi-l{font-size:8.5px;}
+html.mode-mobile .wrap{padding:0 12px 16px;}
+html.mode-mobile .type-bar{padding:12px 12px 8px;}
+html.mode-mobile .fc-body{padding:12px 14px;}
+html.mode-mobile .fgrid2,html.mode-mobile .cl2,html.mode-mobile .dl-grid,html.mode-mobile .sal-fields,html.mode-mobile .sal-set,html.mode-mobile .release-del-info-grid,html.mode-mobile .trash-del-info-grid{grid-template-columns:1fr !important;gap:0 !important;}
+html.mode-mobile .frow{min-height:46px;}
+html.mode-mobile .flbl{min-width:96px;max-width:110px;font-size:12px;}
+html.mode-mobile .finput{font-size:16px;min-width:0;width:100%;}
+html.mode-mobile input[type=date].finput,html.mode-mobile input[type=time].finput{min-width:0;}
+html.mode-mobile .cl-lbl{white-space:normal;}
+html.mode-mobile .admin-stat-grid{gap:8px;}
+html.mode-mobile .bottom-nav{overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;}
+html.mode-mobile .bottom-nav::-webkit-scrollbar{display:none;}
+html.mode-mobile .bn-btn{flex:1 0 auto;min-width:62px;padding:8px 6px;scroll-snap-align:start;}
+html.mode-mobile .bn-btn .bn-label{font-size:9px;white-space:nowrap;}
+html.mode-mobile .qb-fab{width:46px !important;height:46px !important;font-size:20px !important;right:10px !important;bottom:calc(74px + env(safe-area-inset-bottom,0px)) !important;opacity:.92;}
+html.mode-mobile .qb-fab-tooltip{display:none !important;}
+html.mode-mobile table{max-width:100%;}
+html.mode-mobile img,html.mode-mobile canvas,html.mode-mobile svg{max-width:100%;}
+/* Mobile mode opened on a big screen: show a centred phone-width column */
+html.mode-mobile.wide-screen{background:#050505;}
+html.mode-mobile.wide-screen body{max-width:440px;margin:0 auto;box-shadow:0 0 0 1px #222,0 0 60px rgba(0,0,0,.6);min-height:100vh;}
+html.mode-mobile.wide-screen .bottom-nav{left:50% !important;right:auto !important;width:440px;margin-left:-220px;}
+</style>
 </body>
 </html>
