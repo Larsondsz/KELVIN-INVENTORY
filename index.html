@@ -8921,29 +8921,37 @@ function genPDF(r) {
   pa.style.display = 'block';
 
   setTimeout(() => {
-    html2canvas(pa, { scale: 2.5, useCORS: true, backgroundColor: '#fff', width: 794, windowWidth: 794 })
+    // ── Fit to ONE full-bleed A4 page ──
+    // Find the layout width W where the report's natural height matches A4 proportions (297/210),
+    // so content reflows to fill the page edge-to-edge (no side gaps, no overflow).
+    const A4R = 297 / 210;
+    const root = pa.firstElementChild;
+    let W = 794;
+    if (root) {
+      pa.style.width = 'auto';
+      for (W = 794; W <= 1200; W += 6) {
+        root.style.width = W + 'px';
+        root.style.minHeight = '0px';
+        pa.style.width = W + 'px';
+        if (root.offsetHeight <= W * A4R) break;
+      }
+      root.style.minHeight = Math.round(W * A4R) + 'px';   // footer sits at the very bottom of the page
+    }
+    html2canvas(pa, { scale: 2.5 * 794 / W, useCORS: true, backgroundColor: '#fff', width: W, windowWidth: W })
       .then(canvas => {
         const { jsPDF } = window.jspdf;
-        const _pwMM = 210;
-        const _contentH = (canvas.height / canvas.width) * _pwMM;
-        const _pageH = Math.max(297, _contentH);   // A4, or taller if the report needs it (no squashing)
-        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [_pwMM, _pageH] });
-        const pW = pdf.internal.pageSize.getWidth();
-        const pH = pdf.internal.pageSize.getHeight();
-        const iW = canvas.width, iH = canvas.height;
-        // Scale to fill full A4 width (210mm) with margins
-        const margin = 0;
-        const targetW = pW - margin * 2;
-        const ratio = targetW / (iW / 3.7795);
-        const finalW = targetW;
-        const finalH = (iH / 3.7795) * ratio;
-        pdf.addImage(canvas.toDataURL('image/jpeg', 0.97), 'JPEG', margin, 0, finalW, finalH);
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const A4W = 210, A4H = 297;
+        // full-bleed: fill the whole A4 width; height clamped so it can never spill to a 2nd page
+        const finalH = Math.min(A4H, A4W * (canvas.height / canvas.width));
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.97), 'JPEG', 0, 0, A4W, finalH);
         pdf.save(`KW_${r.vehType}_${r.regNo || 'Report'}_${r.inwardDate || ''}.pdf`);
         toast('✓ PDF saved!');
       })
       .catch(() => toast('⚠ PDF failed'))
       .finally(() => {
         pa.style.display = 'none';
+        pa.style.width = '';
         pa.innerHTML = '';
         if (btn) { btn.disabled = false; if (spin) spin.classList.remove('on'); }
       });
