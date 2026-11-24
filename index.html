@@ -4259,7 +4259,7 @@ async function authInit() {
 
 const FIREBASE_URL = 'https://infinity-kelvin-inventory-default-rtdb.firebaseio.com';
 const FIREBASE_PATH = '/kw3_inventory.json';
-const SYNC_INTERVAL_MS = 5000;
+const SYNC_INTERVAL_MS = 60000; // 60 seconds: reduces repeated full-database downloads
 
 // ══════════════════════════════════════════════════════════
 //  FIREBASE ANONYMOUS AUTH
@@ -4663,11 +4663,30 @@ window.addEventListener('offline', async () => {
 
 function startSyncTimer() {
   if (syncTimer) clearInterval(syncTimer);
-  syncTimer = setInterval(() => { pollSync(); agencyPoll(); yardNamePoll(); depositerPoll(); addressLoad(); layoutLoad(); }, SYNC_INTERVAL_MS);
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) { _isOnline = navigator.onLine; pollSync(); agencyPoll(); yardNamePoll(); depositerPoll(); }
-  });
-  window.addEventListener('focus', () => { _isOnline = navigator.onLine; pollSync(); agencyPoll(); yardNamePoll(); depositerPoll(); });
+
+  // Do not run background Firebase downloads while this tab is hidden.
+  syncTimer = setInterval(() => {
+    if (document.hidden || !navigator.onLine) return;
+    pollSync();
+    agencyPoll();
+    yardNamePoll();
+    depositerPoll();
+  }, SYNC_INTERVAL_MS);
+
+  // Refresh once when the user returns to this tab/device.
+  const refreshWhenVisible = () => {
+    if (document.hidden) return;
+    _isOnline = navigator.onLine;
+    if (!_isOnline) return;
+    pollSync();
+    agencyPoll();
+    yardNamePoll();
+    depositerPoll();
+    addressLoad();
+    layoutLoad();
+  };
+  document.addEventListener('visibilitychange', refreshWhenVisible);
+  window.addEventListener('focus', refreshWhenVisible);
 }
 
 // ════════════════════════════════════
@@ -5911,7 +5930,7 @@ function attOnOpen() {
     _attTimer = setInterval(() => {
       const v = document.getElementById('view-attendance');
       if (v && v.classList.contains('active')) attRefreshFromCloud();
-    }, 10000);
+    }, 60000); // 60 seconds
   }
 }
 
@@ -6436,7 +6455,7 @@ function salOnOpen() {
     _salTimer = setInterval(() => {
       const v = document.getElementById('view-salary');
       if (v && v.classList.contains('active') && !salIsTyping()) salRefreshFromCloud();
-    }, 12000);
+    }, 60000); // 60 seconds
   }
 }
 function salIsTyping() { const a = document.activeElement; return !!(a && a.closest && a.closest('#view-salary') && (a.tagName === 'INPUT')); }
