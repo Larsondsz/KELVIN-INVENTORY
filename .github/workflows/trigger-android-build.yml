@@ -16,8 +16,26 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.KELVIN_SOURCE_TOKEN }}
         run: |
-          curl -fL -X POST \
+          if [ -z "$GH_TOKEN" ]; then
+            echo "ERROR: KELVIN_SOURCE_TOKEN is missing"
+            exit 1
+          fi
+
+          RESPONSE=$(curl -sS -w "\nHTTP_STATUS:%{http_code}" \
+            -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/Larsondsz/KELVIN-INVENTORY-APK/actions/workflows/build-android.yml/dispatches \
-            -d '{"ref":"main"}'
+            -d '{"ref":"main"}')
+
+          echo "$RESPONSE"
+
+          STATUS=$(echo "$RESPONSE" | sed -n 's/.*HTTP_STATUS://p')
+
+          if [ "$STATUS" != "204" ]; then
+            echo "Workflow dispatch failed. HTTP status: $STATUS"
+            exit 1
+          fi
+
+          echo "Android build triggered successfully!"
