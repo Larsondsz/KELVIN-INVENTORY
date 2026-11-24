@@ -1,0 +1,23 @@
+
+name: Trigger Kelvin Android Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - '.github/workflows/trigger-android-build.yml'
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger private Android build
+        env:
+          GH_TOKEN: ${{ secrets.KELVIN_SOURCE_TOKEN }}
+        run: |
+          curl -fL -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            https://api.github.com/repos/Larsondsz/KELVIN-INVENTORY-APK/actions/workflows/build-android.yml/dispatches \
+            -d '{"ref":"main"}'
